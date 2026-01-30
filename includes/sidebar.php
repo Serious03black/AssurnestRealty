@@ -174,7 +174,7 @@
                     <i class="fas fa-plus-circle"></i>
                     <span>Add Property</span>
                 </a>
-                <a href="properties.php" class="menu-item">
+                <a href="../pages/viewProperty.php" class="menu-item">
                     <i class="fas fa-list"></i>
                     <span>All Properties</span>
                 </a>
@@ -186,7 +186,7 @@
 
             <div class="menu-section">
                 <div class="menu-title">Users & Sales</div>
-                <a href="users.php" class="menu-item">
+                <a href="manage_users.php" class="menu-item">
                     <i class="fas fa-users"></i>
                     <span>Manage Users</span>
                     <?php if (isset($unapproved) && count($unapproved) > 0): ?>
