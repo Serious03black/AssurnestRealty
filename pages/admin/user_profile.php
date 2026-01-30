@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../includes/db.php';
+include '../../includes/db.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header('Location: ../login.php');
@@ -198,8 +198,8 @@ $total_sold = count($sold_properties);
 </head>
 <body>
 
-<?php include '../includes/sidebar.php'; ?>
-<?php include '../includes/navbar.php'; ?>
+<?php include '../../includes/sidebaradmin.php'; ?>
+<?php include '../../includes/navbar.php'; ?>
 
 <div class="container">
 

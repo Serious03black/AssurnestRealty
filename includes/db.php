@@ -42,3 +42,6 @@ function cloudinary() {
     return $cloudinary;
 }
 ?>
+<?php
+define('BASE_URL', '/real-estate-app');
+?>

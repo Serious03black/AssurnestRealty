@@ -1,7 +1,7 @@
 <?php
 // ALL LOGIC FIRST – NO OUTPUT BEFORE THIS
 session_start();
-include '../includes/db.php';
+include '../../includes/db.php';
 
 // Login check
 if (!isset($_SESSION['user_id'])) {
@@ -257,12 +257,12 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <!-- Navbar with mobile toggle -->
 <nav class="navbar">
     <div class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></div>
-    <?php include '../includes/navbar.php'; ?>
+    <?php include '../../includes/navbar.php'; ?>
 </nav>
 
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
-    <?php include '../includes/sidebar.php'; ?>
+    <?php include '../../includes/sidebaradmin.php'; ?>
 </div>
 
 <div class="main-content">

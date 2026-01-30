@@ -4,7 +4,7 @@
     $success = false;
 
     // Use config.php (which should contain both $pdo and Cloudinary setup)
-    include '../includes/db.php';   // ← important: not db.php if Cloudinary is in config
+    include '../../includes/db.php';   // ← important: not db.php if Cloudinary is in config
 
     if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
         header('Location: ../login.php');
@@ -406,8 +406,8 @@
     </head>
     
     <body>
-        <?php include '../includes/sidebar.php'; ?>
-        <?php include '../includes/navbar.php'; ?>
+        <?php include '../../includes/sidebaradmin.php'; ?>
+        <?php include '../../includes/navbar.php'; ?>
 
         <div class="main-content">
             <h1 class="main-title">Add New Property</h1>

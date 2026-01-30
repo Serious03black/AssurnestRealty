@@ -150,7 +150,7 @@
     <!-- Sidebar Navigation -->
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <a href="admin_dashboard.php" class="company-logo">
+            <a href="<?= BASE_URL ?>/pages/admin/admin_dashboard.php" class="company-logo">
                 <i class="fas fa-building"></i>
                 <div>
                     <div class="company-name">Assurnest Realty</div>
@@ -162,7 +162,7 @@
         <div class="sidebar-menu">
             <div class="menu-section">
                 <div class="menu-title">Dashboard</div>
-                <a href="admin_dashboard.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'admin_dashboard.php' ? 'active' : ''; ?>">
+                <a href="<?= BASE_URL ?>/pages/admin/admin_dashboard.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'admin_dashboard.php' ? 'active' : ''; ?>">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
@@ -170,15 +170,15 @@
 
             <div class="menu-section">
                 <div class="menu-title">Properties</div>
-                <a href="add_property.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'add_property.php' ? 'active' : ''; ?>">
+                <a href="<?= BASE_URL ?>/pages/admin/add_property.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'add_property.php' ? 'active' : ''; ?>">
                     <i class="fas fa-plus-circle"></i>
                     <span>Add Property</span>
                 </a>
-                <a href="../pages/viewProperty.php" class="menu-item">
+                <a href="<?= BASE_URL ?>/pages/admin/viewProperty.php" class="menu-item">
                     <i class="fas fa-list"></i>
                     <span>All Properties</span>
                 </a>
-                <a href="property_categories.php" class="menu-item">
+                <a href="<?= BASE_URL ?>/pages/admin/property_categories.php" class="menu-item">
                     <i class="fas fa-tags"></i>
                     <span>Categories</span>
                 </a>
@@ -186,7 +186,7 @@
 
             <div class="menu-section">
                 <div class="menu-title">Users & Sales</div>
-                <a href="manage_users.php" class="menu-item">
+                <a href="<?= BASE_URL ?>/pages/admin/manage_users.php" class="menu-item">
                     <i class="fas fa-users"></i>
                     <span>Manage Users</span>
                     <?php if (isset($unapproved) && count($unapproved) > 0): ?>
@@ -205,7 +205,7 @@
 
             <div class="menu-section">
                 <div class="menu-title">System</div>
-                <a href="settings.php" class="menu-item">
+                <a href="<?= BASE_URL ?>/pages/admin/settings.php" class="menu-item">
                     <i class="fas fa-cog"></i>
                     <span>Settings</span>
                 </a>
@@ -213,14 +213,14 @@
                     <i class="fas fa-file-alt"></i>
                     <span>Reports</span>
                 </a>
-                <a href="logout.php" class="menu-item logout">
+                <a href="<?= BASE_URL ?>/pages/admin/logout.php" class="menu-item logout">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
                 </a>
             </div>
         </div>
 
-        <div class="admin-profile">
+        <div class="<?= BASE_URL ?>/pages/admin/admin-profile">
             <div class="admin-avatar">
                 <i class="fas fa-user-shield"></i>
             </div>

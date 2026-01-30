@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../includes/db.php';
+include '../../includes/db.php';
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header('Location: login.php');
     exit;
@@ -511,8 +511,8 @@ if (isset($_POST['assign_sale'])) {
     </style>
 </head>
 <body>
-    <?php include '../includes/sidebar.php'; ?>
-    <?php include '../includes/navbar.php'; ?>
+    <?php include '../../includes/sidebaradmin.php'; ?>
+    <?php include '../../includes/navbar.php'; ?>
 
     <div class="main-content">
         <!-- Welcome Banner -->
