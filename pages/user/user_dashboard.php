@@ -1,9 +1,9 @@
 <?php
 session_start();
-include '../includes/db.php';
+include '../../includes/db.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'user') {
-    header('Location: ../login.php');
+    header('Location: .../login.php');
     exit;
 }
 
@@ -93,7 +93,7 @@ if ($user_rank === 'Not ranked yet' && $my_sales > 0) {
             --gray: #6c757d;
             --light-gray: #e9ecef;
             --sidebar-width: 250px;
-            --navbar-height: 70px;
+            /* --navbar-height: 70px; */
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -101,7 +101,7 @@ if ($user_rank === 'Not ranked yet' && $my_sales > 0) {
         body {
             background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
             min-height: 100vh;
-            font-family: 'Segoe UI', sans-serif;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: var(--dark);
         }
 
@@ -117,26 +117,11 @@ if ($user_rank === 'Not ranked yet' && $my_sales > 0) {
             transition: transform 0.3s ease;
         }
 
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: var(--sidebar-width);
-            right: 0;
-            height: var(--navbar-height);
-            background: white;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-            z-index: 999;
-            display: flex;
-            align-items: center;
-            padding: 0 30px;
-            transition: left 0.3s ease;
-        }
-
         .mobile-menu-btn { display: none; font-size: 1.8rem; cursor: pointer; color: var(--dark); }
 
         .main-content {
             margin-left: var(--sidebar-width);
-            margin-top: var(--navbar-height);
+            /* margin-top: var(--navbar-height); */
             padding: 2rem 1.5rem;
             transition: margin-left 0.3s ease;
         }
@@ -317,16 +302,9 @@ if ($user_rank === 'Not ranked yet' && $my_sales > 0) {
 
 <!-- Sidebar -->
 <nav class="sidebar" id="sidebar">
-    <?php include '../includes/sidebar.php'; ?>
+    <?php include '../../includes/sidebaruser.php'; ?>
 </nav>
 
-<!-- Top Navbar -->
-<nav class="navbar">
-    <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
-    <?php include '../includes/navbar.php'; ?>
-</nav>
 
 <!-- Main Content -->
 <div class="main-content">

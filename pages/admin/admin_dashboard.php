@@ -112,6 +112,8 @@ if (isset($_POST['assign_sale'])) {
             padding: 0;
             overflow-x: hidden;
             width: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
         }
 
         .main-content {
@@ -422,7 +424,7 @@ if (isset($_POST['assign_sale'])) {
         }
 
         .currency {
-            font-family: Arial, sans-serif;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         @media (max-width: 1200px) {

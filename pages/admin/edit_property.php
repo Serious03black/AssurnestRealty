@@ -167,7 +167,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Edit Property #<?= $prop_id ?> | Assurnest Realty</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f8f9fa; margin: 0; padding: 0; color: #333; }
+        body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+, sans-serif; background: #f8f9fa; margin: 0; padding: 0; color: #333; }
         .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
         h1 { text-align: center; margin-bottom: 2rem; color: #2c3e50; }
         .form-card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }

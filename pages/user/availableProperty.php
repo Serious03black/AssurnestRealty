@@ -2,14 +2,20 @@
 session_start();
 include '../../includes/db.php';
 
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'user') {
     header('Location: ../login.php');
     exit;
 }
 
-// Fetch all properties  ← this part is NOT changed
-$stmt = $pdo->query("SELECT * FROM properties");
-$properties = $stmt->fetchAll();
+// Fetch only AVAILABLE properties
+$stmt = $pdo->prepare("
+    SELECT id, type, location, address, price, commission, image1, status 
+    FROM properties 
+    WHERE status = 'available' 
+    ORDER BY id DESC
+");
+$stmt->execute();
+$properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -17,47 +23,48 @@ $properties = $stmt->fetchAll();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Properties | Assurnest Realty</title>
+    <title>Available Properties | Assurnest Realty Agent</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <style>
         :root {
             --primary: #2a5bd7;
             --primary-dark: #1e4bb9;
-            --success: #28a745;
-            --warning: #ffc107;
-            --danger: #dc3545;
             --light: #f8f9fa;
             --gray: #6c757d;
             --dark: #2c3e50;
+            --sidebar-width: 250px;
+            /* --navbar-height: 70px; */
         }
 
         body {
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--light);
             margin: 0;
-            padding: 0;
             color: var(--dark);
-
         }
 
-        .container {
-            max-width: 1280px;
-            margin: 40px auto;
-            padding: 0 20px;
+        .sidebar { width: var(--sidebar-width); background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%); color: white; height: 100vh; position: fixed; left: 0; top: 0; z-index: 1000; transition: transform 0.3s ease; }
+        /* .navbar { position: fixed; top: 0; left: var(--sidebar-width); right: 0; height: var(--navbar-height); background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); z-index: 999; display: flex; align-items: center; padding: 0 20px; } */
+        .mobile-menu-btn { display: none; font-size: 1.8rem; cursor: pointer; color: var(--dark); }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            /* margin-top: var(--navbar-height); */
+            padding: 2rem 1.5rem;
+            transition: margin-left 0.3s ease;
         }
 
         h1 {
             text-align: center;
-            color: var(--dark);
             margin-bottom: 2.5rem;
-            font-size: 2.3rem;
-            font-weight: 600;
+            color: var(--dark);
+            font-size: 2.2rem;
         }
 
-        .property-grid {
+        .properties-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.6rem;
+            gap: 1.8rem;
         }
 
         .property-card {
@@ -79,11 +86,28 @@ $properties = $stmt->fetchAll();
         }
 
         .card-image {
-            height: 210px;
-            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            height: 220px;
+            background: #f0f4f8;
+            overflow: hidden;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .property-card:hover .card-image img {
+            transform: scale(1.08);
+        }
+
+        .card-image-placeholder {
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
             color: #78909c;
             font-size: 5rem;
         }
@@ -99,7 +123,6 @@ $properties = $stmt->fetchAll();
             font-size: 1.4rem;
             font-weight: 700;
             margin: 0 0 0.6rem 0;
-            color: var(--dark);
         }
 
         .property-price {
@@ -117,20 +140,11 @@ $properties = $stmt->fetchAll();
             flex-grow: 1;
         }
 
-        .status-badge {
-            display: inline-block;
-            padding: 0.45rem 1.1rem;
-            border-radius: 50px;
-            font-size: 0.88rem;
-            font-weight: 600;
+        .commission-info {
+            font-size: 0.95rem;
+            color: var(--primary);
             margin-bottom: 1rem;
         }
-
-        .status-available { background: #e8f5e9; color: #2e7d32; }
-        .status-sold     { background: #ffebee; color: #c62828; }
-        .status-maintenance,
-        .status-under_maintenance { background: #fff3e0; color: #ef6c00; }
-        .status-on-hold  { background: #e3f2fd; color: #1565c0; }
 
         .view-btn {
             margin-top: auto;
@@ -161,37 +175,57 @@ $properties = $stmt->fetchAll();
             margin-bottom: 1.8rem;
         }
 
+        @media (max-width: 992px) {
+            .main-content { margin-left: 0; }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.mobile-open { transform: translateX(0); }
+            .mobile-menu-btn { display: block; }
+        }
+
         @media (max-width: 576px) {
-            .property-grid {
-                grid-template-columns: 1fr;
-            }
-            h1 {
-                font-size: 1.9rem;
-            }
+            .properties-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 1.9rem; }
         }
     </style>
 </head>
 <body>
 
-<?php include '../includes/navbar.php'; ?>
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+    <?php include '../../includes/sidebaruser.php'; ?>
+</nav>
 
-<div class="container">
+<!-- Navbar -->
+<!-- <nav class="navbar">
+    <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+</nav> -->
 
-    <h1>All Properties</h1>
+<div class="main-content">
+
+    <h1>Available Properties</h1>
 
     <?php if (empty($properties)): ?>
         <div class="no-properties">
             <i class="fas fa-home"></i>
-            <p>No properties found in the database.</p>
-            <p>Add your first property using the admin panel.</p>
+            <p>No available properties found at the moment.</p>
+            <p>Check back later or contact admin for updates.</p>
         </div>
     <?php else: ?>
-        <div class="property-grid">
+        <div class="properties-grid">
             <?php foreach ($properties as $prop): ?>
                 <a href="viewProperty.php?id=<?= $prop['id'] ?>" class="property-card">
                     <div class="card-image">
-                        <i class="fas fa-building"></i>
+                        <?php if (!empty($prop['image1']) && filter_var($prop['image1'], FILTER_VALIDATE_URL)): ?>
+                            <img src="<?= htmlspecialchars($prop['image1']) ?>" alt="<?= htmlspecialchars($prop['type'] ?? 'Property') ?>" loading="lazy">
+                        <?php else: ?>
+                            <div class="card-image-placeholder">
+                                <i class="fas fa-building"></i>
+                            </div>
+                        <?php endif; ?>
                     </div>
+
                     <div class="card-body">
                         <h2 class="property-type">
                             <?= htmlspecialchars($prop['type'] ?? 'Property') ?>
@@ -203,16 +237,14 @@ $properties = $stmt->fetchAll();
 
                         <div class="property-location">
                             <?= htmlspecialchars(trim(implode(', ', array_filter([
-                                $prop['area'] ?? '',
-                                $prop['city'] ?? '',
-                                $prop['state'] ?? '',
-                                $prop['pincode'] ?? ''
+                                $prop['location'] ?? '',
+                                $prop['address'] ?? ''
                             ])))) ?: 'Location not specified' ?>
                         </div>
 
-                        <span class="status-badge status-<?= strtolower(str_replace(' ', '_', $prop['status'] ?? 'unknown')) ?>">
-                            <?= ucfirst($prop['status'] ?? 'Unknown') ?>
-                        </span>
+                        <div class="commission-info">
+                            Commission: <?= htmlspecialchars($prop['commission'] ?? '—') ?>%
+                        </div>
 
                         <div class="view-btn">
                             View Details →
@@ -224,6 +256,14 @@ $properties = $stmt->fetchAll();
     <?php endif; ?>
 
 </div>
+
+<script>
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('mobile-open');
+    }
+
+    document.getElementById('mobileMenuBtn')?.addEventListener('click', toggleSidebar);
+</script>
 
 </body>
 </html>

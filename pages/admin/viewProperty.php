@@ -86,7 +86,8 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body { font-family: 'Segoe UI', sans-serif; background: var(--light); min-height: 100vh; color: var(--dark); }
+        body {               font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+ background: var(--light); min-height: 100vh; color: var(--dark); }
 
         /* .navbar {
             background: white;

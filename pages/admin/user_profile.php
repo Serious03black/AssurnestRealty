@@ -71,7 +71,8 @@ $total_sold = count($sold_properties);
             --dark: #2c3e50;
         }
 
-        body { font-family: 'Segoe UI', sans-serif; background: var(--light); margin: 0; padding: 0; color: var(--dark); }
+        body {                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+ background: var(--light); margin: 0; padding: 0; color: var(--dark); }
         .container { max-width: 1100px; margin: 40px auto; padding: 0 20px;  margin-top: 1rem;
             margin-left:250px }
         .back-link { display: inline-block; margin-bottom: 1.5rem; color: var(--primary); font-weight: 600; text-decoration: none; }

@@ -178,10 +178,10 @@
                     <i class="fas fa-list"></i>
                     <span>All Properties</span>
                 </a>
-                <a href="<?= BASE_URL ?>/pages/admin/property_categories.php" class="menu-item">
+                <!-- <a href="<?= BASE_URL ?>/pages/admin/property_categories.php" class="menu-item">
                     <i class="fas fa-tags"></i>
                     <span>Categories</span>
-                </a>
+                </a> -->
             </div>
 
             <div class="menu-section">
@@ -197,22 +197,22 @@
                     <i class="fas fa-chart-line"></i>
                     <span>Sales Reports</span>
                 </a>
-                <a href="commission.php" class="menu-item">
+                <!-- <a href="commission.php" class="menu-item">
                     <i class="fas fa-dollar-sign"></i>
                     <span>Commissions</span>
-                </a>
+                </a> -->
             </div>
 
             <div class="menu-section">
                 <div class="menu-title">System</div>
-                <a href="<?= BASE_URL ?>/pages/admin/settings.php" class="menu-item">
+                <!-- <a href="<?= BASE_URL ?>/pages/admin/settings.php" class="menu-item">
                     <i class="fas fa-cog"></i>
                     <span>Settings</span>
                 </a>
                 <a href="reports.php" class="menu-item">
                     <i class="fas fa-file-alt"></i>
                     <span>Reports</span>
-                </a>
+                </a> -->
                 <a href="<?= BASE_URL ?>/pages/admin/logout.php" class="menu-item logout">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>

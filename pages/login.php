@@ -24,9 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['role'] = $user['role'];
         if ($user['role'] === 'admin') {
-            header('Location: admin_dashboard.php');
+            header('Location: ./admin/admin_dashboard.php');
         } else {
-            header('Location: user_dashboard.php');
+            header('Location: ./user/user_dashboard.php');
         }
         exit;
     } else {
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         :root {
