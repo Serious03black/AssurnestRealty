@@ -1,633 +1,480 @@
-    <?php
-    session_start();
-    $message = '';
-    $success = false;
+<?php
+session_start();
+$message = '';
+$success = false;
 
-    // Use config.php (which should contain both $pdo and Cloudinary setup)
-    include '../../includes/db.php';   // ← important: not db.php if Cloudinary is in config
+include '../../includes/db.php';
 
-    if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-        header('Location: ../login.php');
-        exit;
-    }
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    header('Location: ../login.php');
+    exit;
+}
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $type       = trim($_POST['type'] ?? '');
-        $location   = trim($_POST['location'] ?? '');
-        $address    = trim($_POST['address'] ?? '');
-        $price      = floatval($_POST['price'] ?? 0);
-        $commission = floatval($_POST['commission'] ?? 0);
-        $status     = $_POST['status'] ?? 'available';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $type       = trim($_POST['type'] ?? '');
+    $location   = trim($_POST['location'] ?? '');
+    $address    = trim($_POST['address'] ?? '');
+    $price      = floatval($_POST['price'] ?? 0);
+    $commission = floatval($_POST['commission'] ?? 0);
+    $status     = $_POST['status'] ?? 'available';
 
-        if (empty($type) || empty($location) || empty($address) || $price <= 0) {
-            $message = "Please fill all required fields correctly.";
-            $success = false;
-        } else {
-            try {
-                // Insert property
-                $stmt = $pdo->prepare("
-                    INSERT INTO properties (type, location, address, price, commission, status)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                ");
-                $stmt->execute([$type, $location, $address, $price, $commission, $status]);
-                $prop_id = $pdo->lastInsertId();
+    if (empty($type) || empty($location) || empty($address) || $price <= 0) {
+        $message = "Please fill all required fields correctly.";
+        $success = false;
+    } else {
+        try {
+            $stmt = $pdo->prepare("
+                INSERT INTO properties (type, location, address, price, commission, status)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ");
+            $stmt->execute([$type, $location, $address, $price, $commission, $status]);
+            $prop_id = $pdo->lastInsertId();
 
-                $image_urls = [null, null, null, null];
-                $video_url  = null;
+            $image_urls = [null, null, null, null];
+            $video_url  = null;
 
-                // Upload images
-                for ($i = 1; $i <= 4; $i++) {
-                    $key = "image{$i}";
-                    if (!empty($_FILES[$key]['tmp_name']) && $_FILES[$key]['error'] === UPLOAD_ERR_OK) {
-                        $upload = cloudinary()->uploadApi()->upload(
-                            $_FILES[$key]['tmp_name'],
-                            [
-                                'folder'        => 'assurnest/properties',
-                                'resource_type' => 'image',
-                                'public_id'     => "prop_{$prop_id}_img{$i}",
-                                'overwrite'     => true
-                            ]
-                        );
-                        $image_urls[$i-1] = $upload['secure_url'];
-                    }
-                }
-
-                // Upload video
-                if (!empty($_FILES['video']['tmp_name']) && $_FILES['video']['error'] === UPLOAD_ERR_OK) {
+            for ($i = 1; $i <= 4; $i++) {
+                $key = "image{$i}";
+                if (!empty($_FILES[$key]['tmp_name']) && $_FILES[$key]['error'] === UPLOAD_ERR_OK) {
                     $upload = cloudinary()->uploadApi()->upload(
-                        $_FILES['video']['tmp_name'],
+                        $_FILES[$key]['tmp_name'],
                         [
                             'folder'        => 'assurnest/properties',
-                            'resource_type' => 'video',
-                            'public_id'     => "prop_{$prop_id}_video",
+                            'resource_type' => 'image',
+                            'public_id'     => "prop_{$prop_id}_img{$i}",
                             'overwrite'     => true
                         ]
                     );
-                    $video_url = $upload['secure_url'];
+                    $image_urls[$i-1] = $upload['secure_url'];
                 }
-
-                // Save URLs
-                $update = $pdo->prepare("
-                    UPDATE properties 
-                    SET image1 = ?, image2 = ?, image3 = ?, image4 = ?, video = ?
-                    WHERE id = ?
-                ");
-                $update->execute([
-                    $image_urls[0], $image_urls[1], $image_urls[2], $image_urls[3],
-                    $video_url, $prop_id
-                ]);
-
-                $message = "Property added successfully! (ID: $prop_id)";
-                $success = true;
-
-            } catch (Exception $e) {
-                $message = "Error: " . $e->getMessage();
-                $success = false;
             }
+
+            if (!empty($_FILES['video']['tmp_name']) && $_FILES['video']['error'] === UPLOAD_ERR_OK) {
+                $upload = cloudinary()->uploadApi()->upload(
+                    $_FILES['video']['tmp_name'],
+                    [
+                        'folder'        => 'assurnest/properties',
+                        'resource_type' => 'video',
+                        'public_id'     => "prop_{$prop_id}_video",
+                        'overwrite'     => true
+                    ]
+                );
+                $video_url = $upload['secure_url'];
+            }
+
+            $update = $pdo->prepare("
+                UPDATE properties 
+                SET image1 = ?, image2 = ?, image3 = ?, image4 = ?, video = ?
+                WHERE id = ?
+            ");
+            $update->execute([
+                $image_urls[0], $image_urls[1], $image_urls[2], $image_urls[3],
+                $video_url, $prop_id
+            ]);
+
+            $message = "Property added successfully! (ID: $prop_id)";
+            $success = true;
+        } catch (Exception $e) {
+            $message = "Error: " . $e->getMessage();
+            $success = false;
         }
     }
-    ?>
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Add New Property | Assurnest Realty Admin</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            }
+}
+?>
 
-            :root {
-                --primary: #2a5bd7;
-                --primary-dark: #1e4bb9;
-                --secondary: #ff7e5f;
-                --light: #f8f9fa;
-                --dark: #343a40;
-                --success: #28a745;
-                --warning: #ffc107;
-                --gray: #6c757d;
-                --light-gray: #e9ecef;
-                --navbar-height: 70px;
-                --sidebar-width: 250px;
-                --card-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Property | Assurnest Realty Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        :root {
+            --dark-bg: #0f1217;
+            --card-bg: #161b22;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --rich-green: #0f6b3a;
+            --rich-green-dark: #084d2a;
+            --rich-blue: #1e40af;
+            --gold: #d4af37;
+            --gold-dark: #b8860b;
+            --border: #2d3748;
+            --shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
 
-            body {
-                background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
-                min-height: 100vh;
-                color: var(--dark);
-                margin-left:1%;
-                padding: 0;
-            }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-            /* Main Content Styles */
-            .main-content {
-                margin-left: var(--sidebar-width);
-                padding-top: var(--navbar-height);
-                padding: calc(var(--navbar-height) + 20px) 30px 30px;
-                transition: all 0.3s;
-                min-height: 100vh;
-            }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
 
-            .main-title {
-                font-size: 28px;
-                margin-bottom: 10px;
-                color: var(--dark);
-                position: relative;
-                padding-bottom: 10px;
-            }
+        .sidebar { width: 260px; background: linear-gradient(180deg, var(--rich-green-dark), var(--rich-green)); color: white; height: 100vh; position: fixed; left: 0; top: 0; z-index: 1000; transition: transform 0.4s ease; box-shadow: 4px 0 25px rgba(0,0,0,0.5); }
+        .navbar { position: fixed; top: 0; left: 260px; right: 0; height: 75px; background: linear-gradient(90deg, var(--gold), var(--gold-dark)); color: var(--black); box-shadow: 0 4px 20px rgba(0,0,0,0.4); z-index: 999; display: flex; align-items: center; padding: 0 30px; font-weight: 600; transition: left 0.4s ease; }
+        .mobile-menu-btn { display: none; font-size: 1.9rem; cursor: pointer; color: var(--black); }
 
-            .main-title:after {
-                content: '';
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                width: 60px;
-                height: 4px;
-                background: var(--secondary);
-                border-radius: 2px;
-            }
+        .main-content {
+            margin-left: 260px;
+            margin-top: 75px;
+            padding: 2.5rem 2rem;
+            min-height: calc(100vh - 75px);
+            transition: margin-left 0.4s ease;
+        }
 
-            .subtitle {
-                color: var(--gray);
-                margin-bottom: 30px;
-                font-size: 16px;
-            }
+        .form-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--gold);
+            box-shadow: var(--shadow);
+        }
 
-            .card {
-                background: white;
-                border-radius: 12px;
-                box-shadow: var(--card-shadow);
-                overflow: hidden;
-                margin-bottom: 30px;
-            }
+        .form-header {
+            background: linear-gradient(135deg, var(--rich-green), var(--rich-blue));
+            color: white;
+            padding: 2.5rem 2rem;
+            text-align: center;
+        }
 
-            .card-header {
-                background: linear-gradient(to right, var(--primary), var(--primary-dark));
-                color: white;
-                padding: 20px 30px;
-                font-size: 20px;
-                font-weight: 600;
-                display: flex;
-                align-items: center;
-                gap: 12px;
-            }
+        .form-header h1 {
+            font-size: 2.3rem;
+            margin-bottom: 0.6rem;
+        }
 
-            .card-header i {
-                font-size: 24px;
-            }
+        .form-header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
 
-            .card-body {
-                padding: 30px;
-            }
+        .form-body {
+            padding: 2.5rem;
+        }
 
-            .form-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-                gap: 25px;
-            }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.8rem;
+        }
 
-            .form-group {
-                margin-bottom: 20px;
-            }
+        .form-group {
+            margin-bottom: 1.4rem;
+        }
 
-            .form-label {
-                display: block;
-                margin-bottom: 8px;
-                font-weight: 600;
-                color: var(--dark);
-                font-size: 15px;
-            }
+        .form-label {
+            display: block;
+            margin-bottom: 0.7rem;
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 1.05rem;
+        }
 
-            .form-control {
-                width: 100%;
-                padding: 12px 15px;
-                border: 1px solid var(--light-gray);
-                border-radius: 8px;
-                font-size: 15px;
-                transition: all 0.3s;
-                background-color: #fdfdfd;
-            }
+        .form-control,
+        textarea.form-control,
+        input[type="file"] {
+            width: 100%;
+            padding: 1rem 1.3rem;
+            background: #1e293b;
+            border: 2px solid var(--gold);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
 
-            .form-control:focus {
-                outline: none;
-                border-color: var(--primary);
-                box-shadow: 0 0 0 3px rgba(42, 91, 215, 0.1);
-            }
+        .form-control:focus,
+        textarea.form-control:focus {
+            outline: none;
+            border-color: var(--rich-green);
+            box-shadow: 0 0 0 4px rgba(15,107,58,0.25);
+        }
 
-            textarea.form-control {
-                min-height: 100px;
-                resize: vertical;
-            }
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
 
-            .status-badges {
-                display: flex;
-                gap: 10px;
-                flex-wrap: wrap;
-            }
+        .status-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
 
-            .status-badge {
-                padding: 8px 15px;
-                border-radius: 30px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s;
-                border: 2px solid transparent;
-            }
+        .status-badge {
+            padding: 0.9rem 1.6rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--gold);
+            background: transparent;
+            color: var(--text-main);
+        }
 
-            .status-badge.available {
-                background-color: rgba(40, 167, 69, 0.1);
-                color: var(--success);
-            }
+        .status-badge.active,
+        .status-badge:hover {
+            background: var(--rich-green);
+            color: white;
+            border-color: var(--rich-green);
+        }
 
-            .status-badge.sold {
-                background-color: rgba(220, 53, 69, 0.1);
-                color: #dc3545;
-            }
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: block;
+            margin-top: 0.5rem;
+        }
 
-            .status-badge.maintenance {
-                background-color: rgba(255, 193, 7, 0.1);
-                color: var(--warning);
-            }
+        .file-btn {
+            background: var(--rich-blue);
+            color: white;
+            padding: 1rem 1.6rem;
+            border-radius: 10px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: all 0.3s ease;
+            border: 2px solid var(--gold);
+        }
 
-            .status-badge:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-            }
+        .file-btn:hover {
+            background: var(--rich-blue-dark);
+        }
 
-            .status-badge.active {
-                border-color: currentColor;
-            }
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
 
-            .hidden-radio {
-                display: none;
-            }
+        .btn {
+            padding: 1.1rem 2.2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.9rem;
+        }
 
-            .price-display {
-                font-size: 22px;
-                font-weight: 700;
-                color: var(--primary);
-                margin-top: 5px;
-            }
+        .btn-primary {
+            background: var(--rich-green);
+            color: white;
+            border: 2px solid var(--gold);
+            box-shadow: 0 4px 15px rgba(15,107,58,0.3);
+        }
 
-            .commission-display {
-                font-size: 16px;
-                color: var(--secondary);
-                font-weight: 600;
-            }
+        .btn-primary:hover {
+            background: var(--rich-green-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(15,107,58,0.4);
+        }
 
-            .form-actions {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-top: 40px;
-                padding-top: 20px;
-                border-top: 1px solid var(--light-gray);
-            }
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-main);
+            border: 2px solid var(--gold);
+        }
 
-            .btn {
-                padding: 12px 25px;
-                border-radius: 8px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s;
-                border: none;
-                font-size: 16px;
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                text-decoration: none;
-            }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.08);
+        }
 
-            .btn-primary {
-                background: linear-gradient(to right, var(--primary), var(--primary-dark));
-                color: white;
-            }
+        .message {
+            padding: 1.4rem;
+            border-radius: 12px;
+            margin-bottom: 2.5rem;
+            text-align: center;
+            font-weight: 600;
+            border: 2px solid var(--gold);
+        }
 
-            .btn-primary:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(42, 91, 215, 0.3);
-            }
+        .message.success { background: rgba(16,185,129,0.15); color: #10b981; }
+        .message.error   { background: rgba(239,68,68,0.15); color: #ef4444; }
 
-            .btn-secondary {
-                background: var(--light);
-                color: var(--gray);
-                border: 1px solid var(--light-gray);
-            }
+        @media (max-width: 992px) {
+            .main-content { margin-left: 0; padding: 2rem 1.5rem; }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.mobile-open { transform: translateX(0); }
+            .mobile-menu-btn { display: block; }
+            .form-actions { flex-direction: column; gap: 1.2rem; }
+            .btn { width: 100%; justify-content: center; }
+        }
 
-            .btn-secondary:hover {
-                background: var(--light-gray);
-            }
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
 
-            .inspiration-box {
-                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-                color: white;
-                border-radius: 12px;
-                padding: 25px;
-                margin-top: 30px;
-                display: flex;
-                align-items: center;
-                gap: 20px;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            }
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+    <?php include '../../includes/sidebaradmin.php'; ?>
+</nav>
 
-            .inspiration-icon {
-                font-size: 40px;
-                color: var(--secondary);
-            }
+<!-- Navbar -->
+<nav class="navbar">
+    <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+    <?php include '../../includes/navbar.php'; ?>
+</nav>
 
-            .inspiration-text h3 {
-                font-size: 20px;
-                margin-bottom: 8px;
-            }
+<div class="main-content">
 
-            .inspiration-text p {
-                opacity: 0.9;
-                line-height: 1.6;
-            }
-
-            @media (max-width: 768px) {
-                .sidebar {
-                    transform: translateX(-100%);
-                    width: 280px;
-                }
-                
-                .sidebar.mobile-open {
-                    transform: translateX(0);
-                }
-                
-                .navbar {
-                    left: 0;
-                    padding: 0 20px;
-                }
-                
-                .mobile-menu-btn {
-                    display: block;
-                }
-                
-                .navbar-search {
-                    display: none;
-                }
-                
-                .user-info {
-                    display: none;
-                }
-                
-                .main-content {
-                    margin-left: 0;
-                    padding: calc(var(--navbar-height) + 20px) 15px 15px;
-                }
-                
-                .form-grid {
-                    grid-template-columns: 1fr;
-                }
-                
-                .form-actions {
-                    flex-direction: column;
-                    gap: 15px;
-                }
-                
-                .btn {
-                    width: 100%;
-                    justify-content: center;
-                }
-                
-                .inspiration-box {
-                    flex-direction: column;
-                    text-align: center;
-                }
-            }
-        </style>
-    </head>
-    
-    <body>
-        <?php include '../../includes/sidebaradmin.php'; ?>
-        <?php include '../../includes/navbar.php'; ?>
-
-        <div class="main-content">
-            <h1 class="main-title">Add New Property</h1>
-            <p class="subtitle">Fill in the property details to add it to your portfolio. Let's create new opportunities!</p>
-
-            <?php if ($message): ?>
-                <div class="message <?= $success ? 'success' : 'error' ?>">
-                    <?= nl2br(htmlspecialchars($message)) ?>
-                </div>
-            <?php endif; ?>
-
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-home"></i> Property Information
-                </div>
-                <div class="card-body">
-                    <form method="POST" id="propertyForm" enctype="multipart/form-data">
-                        <div class="form-grid">
-                            <!-- Your existing fields (type, location, price, commission, address, status) remain unchanged -->
-
-                            <div class="form-group">
-                                <label class="form-label" for="type">
-                                    <i class="fas fa-tag"></i> Property Type
-                                </label>
-                                <input type="text" class="form-control" id="type" name="type" required placeholder="e.g., Villa, Apartment, Condo">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label" for="location">
-                                    <i class="fas fa-map-marker-alt"></i> Location
-                                </label>
-                                <input type="text" class="form-control" id="location" name="location" required 
-                                    placeholder="e.g., Downtown, Suburb, Beachfront">
-                            </div>
-                            
-                            <div class="form-group">
-                                <h2 class="form-label" for="price">
-                                ₹ Price
-                                </h2>
-                                <input type="number" class="form-control" id="price" name="price" step="0.01" required 
-                                    placeholder="0.00" oninput="updatePriceDisplay()">
-                                <div class="price-display" id="priceDisplay">₹ 0.00</div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label" for="commission">
-                                    <i class="fas fa-percentage"></i> Commission (%)
-                                </label>
-                                <input type="number" class="form-control" id="commission" name="commission" step="0.01" required 
-                                    placeholder="0.00" oninput="updateCommissionDisplay()">
-                                <div class="commission-display" id="commissionDisplay">0% (₹ 0.00)</div>
-                            </div>
-                            
-                            <div class="form-group" style="grid-column: span 2;">
-                                <label class="form-label" for="address">
-                                    <i class="fas fa-address-card"></i> Full Address
-                                </label>
-                                <textarea class="form-control" id="address" name="address" required 
-                                        placeholder="Enter the complete property address..."></textarea>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <i class="fas fa-signal"></i> Property Status
-                                </label>
-                                <div class="status-badges">
-                                    <label class="status-badge available">
-                                        <input type="radio" name="status" value="available" class="hidden-radio" checked> 
-                                        Available
-                                    </label>
-                                    <label class="status-badge sold">
-                                        <input type="radio" name="status" value="sold" class="hidden-radio">
-                                        Sold
-                                    </label>
-                                    <label class="status-badge maintenance">
-                                        <input type="radio" name="status" value="maintenance" class="hidden-radio">
-                                        Maintenance
-                                    </label>
-                                </div>
-                            </div>
-                        <div class="form-group" style="grid-column: span 2;">
-                                <label class="form-label"><i class="fas fa-images"></i> Property Images (up to 4)</label>
-                                <input type="file" name="image1" accept="image/*" class="form-control">
-                                <div class="file-note">Main / Cover Image</div><br>
-                                <input type="file" name="image2" accept="image/*" class="form-control"><br>
-                                <input type="file" name="image3" accept="image/*" class="form-control"><br>
-                                <input type="file" name="image4" accept="image/*" class="form-control">
-                            </div>
-
-                            <div class="form-group" style="grid-column: span 2;">
-                                <label class="form-label"><i class="fas fa-video"></i> Property Video (optional, 1 only)</label>
-                                <input type="file" name="video" accept="video/*" class="form-control">
-                            </div>
-                        </div>
-
-                    <div class="form-actions">
-                            <a href="admin_dashboard.php" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left"></i> Back to Dashboard
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-plus-circle"></i> Add Property
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <!-- Your inspiration box remains -->
-            <div class="inspiration-box">
-                <div class="inspiration-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="inspiration-text">
-                    <h3>Real Estate Opportunity Awaits!</h3>
-                    <p>Every property added is a new opportunity for growth. You're not just adding a listing—you're connecting dreams to reality and building futures. Premium properties attract premium clients.</p>
-                </div>
-            </div>
-        </div>
+    <div class="form-container">
+        <div class="form-header">
+            <h1>Add New Property</h1>
+            <p>Enter premium property details to expand your portfolio</p>
         </div>
 
-        <script>
-            // Mobile sidebar toggle
-            function toggleSidebar() {
-                document.getElementById('sidebar').classList.toggle('mobile-open');
-            }
-            
-            // Close sidebar when clicking outside on mobile
-            document.addEventListener('click', function(event) {
-                const sidebar = document.getElementById('sidebar');
-                const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-                
-                if (window.innerWidth <= 768 && 
-                    !sidebar.contains(event.target) && 
-                    (!mobileMenuBtn || !mobileMenuBtn.contains(event.target))) {
-                    sidebar.classList.remove('mobile-open');
-                }
-            });
+        <?php if ($message): ?>
+            <div class="message <?= $success ? 'success' : 'error' ?>">
+                <?= htmlspecialchars($message) ?>
+            </div>
+        <?php endif; ?>
 
-            // Update price display with formatting
-            function updatePriceDisplay() {
-                const priceInput = document.getElementById('price');
-                const priceDisplay = document.getElementById('priceDisplay');
-                const price = parseFloat(priceInput.value) || 0;
-                
-                // Format with commas and 2 decimal places
-                priceDisplay.textContent = '₹ ' + price.toLocaleString('en-US', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                });
-                
-                updateCommissionDisplay();
-            }
-            
-            // Update commission display
-            function updateCommissionDisplay() {
-                const priceInput = document.getElementById('price');
-                const commissionInput = document.getElementById('commission');
-                const commissionDisplay = document.getElementById('commissionDisplay');
-                
-                const price = parseFloat(priceInput.value) || 0;
-                const commission = parseFloat(commissionInput.value) || 0;
-                const commissionAmount = (price * commission) / 100;
-                
-                commissionDisplay.textContent = `${commission}% (₹ ${commissionAmount.toLocaleString('en-US', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                })})`;
-            }
-            
-            // Initialize displays
-            document.addEventListener('DOMContentLoaded', function() {
-                updatePriceDisplay();
-                
-                // Add active class to selected status badge
-                const statusBadges = document.querySelectorAll('.status-badge');
-                statusBadges.forEach(badge => {
-                    const radio = badge.querySelector('.hidden-radio');
-                    if (radio.checked) {
-                        badge.classList.add('active');
-                    }
-                    
-                    badge.addEventListener('click', function() {
-                        statusBadges.forEach(b => b.classList.remove('active'));
-                        this.classList.add('active');
-                    });
-                });
-                
-                // Form validation
-                const form = document.getElementById('propertyForm');
-                form.addEventListener('submit', function(e) {
-                    let valid = true;
-                    const inputs = form.querySelectorAll('input[required], textarea[required]');
-                    
-                    inputs.forEach(input => {
-                        if (!input.value.trim()) {
-                            valid = false;
-                            input.style.borderColor = '#dc3545';
-                        } else {
-                            input.style.borderColor = '';
-                        }
-                    });
-                    
-                    if (!valid) {
-                        e.preventDefault();
-                        alert('Please fill in all required fields.');
-                    }
-                });
+        <div class="form-body">
+            <form method="POST" id="propertyForm" enctype="multipart/form-data">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="type">
+                            <i class="fas fa-tag"></i> Property Type
+                        </label>
+                        <input type="text" class="form-control" id="type" name="type" required placeholder="e.g., Villa, Apartment, Condo">
+                    </div>
 
-                // User dropdown toggle
-                document.getElementById('userDropdownBtn')?.addEventListener('click', function() {
-                    alert('Profile menu - Add user dropdown functionality here');
-                });
+                    <div class="form-group">
+                        <label class="form-label" for="location">
+                            <i class="fas fa-map-marker-alt"></i> Location
+                        </label>
+                        <input type="text" class="form-control" id="location" name="location" required placeholder="e.g., Bandra, Powai, Andheri">
+                    </div>
 
-                // Search functionality
-                document.querySelector('.search-input')?.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        alert('Searching for: ' + this.value);
-                        // Implement actual search here
-                    }
-                });
-            });
-        </script>   
-    </body>
-    </html>
+                    <div class="form-group">
+                        <label class="form-label" for="price">
+                            <i class="fas fa-rupee-sign"></i> Price (₹)
+                        </label>
+                        <input type="number" class="form-control" id="price" name="price" step="0.01" required placeholder="0.00" oninput="updatePriceDisplay()">
+                        <div class="price-display" id="priceDisplay">₹ 0.00</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="commission">
+                            <i class="fas fa-percentage"></i> Commission (%)
+                        </label>
+                        <input type="number" class="form-control" id="commission" name="commission" step="0.01" required placeholder="0.00" oninput="updateCommissionDisplay()">
+                        <div class="commission-display" id="commissionDisplay">0% (₹ 0.00)</div>
+                    </div>
+
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label class="form-label" for="address">
+                            <i class="fas fa-address-card"></i> Full Address
+                        </label>
+                        <textarea class="form-control" id="address" name="address" required placeholder="Enter complete property address..."></textarea>
+                    </div>
+
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label class="form-label">
+                            <i class="fas fa-signal"></i> Property Status
+                        </label>
+                        <div class="status-badges">
+                            <label class="status-badge available">
+                                <input type="radio" name="status" value="available" class="hidden-radio" checked> 
+                                Available
+                            </label>
+                            <label class="status-badge sold">
+                                <input type="radio" name="status" value="sold" class="hidden-radio">
+                                Sold
+                            </label>
+                            <label class="status-badge maintenance">
+                                <input type="radio" name="status" value="maintenance" class="hidden-radio">
+                                Maintenance
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label class="form-label"><i class="fas fa-images"></i> Property Images (up to 4)</label>
+                        <div class="file-input-wrapper">
+                            <div class="file-btn"><i class="fas fa-upload"></i> Main Image (Cover)</div>
+                            <input type="file" name="image1" accept="image/*">
+                        </div><br>
+                        <div class="file-input-wrapper">
+                            <div class="file-btn"><i class="fas fa-upload"></i> Image 2</div>
+                            <input type="file" name="image2" accept="image/*">
+                        </div><br>
+                        <div class="file-input-wrapper">
+                            <div class="file-btn"><i class="fas fa-upload"></i> Image 3</div>
+                            <input type="file" name="image3" accept="image/*">
+                        </div><br>
+                        <div class="file-input-wrapper">
+                            <div class="file-btn"><i class="fas fa-upload"></i> Image 4</div>
+                            <input type="file" name="image4" accept="image/*">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label class="form-label"><i class="fas fa-video"></i> Property Video (optional)</label>
+                        <div class="file-input-wrapper">
+                            <div class="file-btn"><i class="fas fa-upload"></i> Upload Video</div>
+                            <input type="file" name="video" accept="video/*">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a href="<?= BASE_URL ?>pages/admin/admin_dashboard.php" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> Add Property
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// Mobile sidebar toggle
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('mobile-open');
+}
+
+document.getElementById('mobileMenuBtn')?.addEventListener('click', toggleSidebar);
+
+// Price & commission live preview
+function updatePriceDisplay() {
+    const price = parseFloat(document.getElementById('price').value) || 0;
+    document.getElementById('priceDisplay').textContent = '₹ ' + price.toLocaleString('en-IN', {minimumFractionDigits: 2});
+    updateCommissionDisplay();
+}
+
+function updateCommissionDisplay() {
+    const price = parseFloat(document.getElementById('price').value) || 0;
+    const commission = parseFloat(document.getElementById('commission').value) || 0;
+    const amount = (price * commission) / 100;
+    document.getElementById('commissionDisplay').textContent = `${commission}% (₹ ${amount.toLocaleString('en-IN', {minimumFractionDigits: 2})})`;
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', updatePriceDisplay);
+</script>
+
+</body>
+</html>

@@ -1,5 +1,4 @@
 <?php
-// ALL LOGIC FIRST – NO OUTPUT BEFORE THIS
 session_start();
 include '../../includes/db.php';
 
@@ -31,27 +30,21 @@ if (isset($_POST['update_status']) && isset($_POST['prop_id']) && isset($_POST['
     $new_status  = $_POST['status'];
     $new_user_id = !empty($_POST['user_id']) ? (int)$_POST['user_id'] : null;
 
-    // Update property status
     $pdo->prepare("UPDATE properties SET status = ? WHERE id = ?")
         ->execute([$new_status, $prop_id]);
 
-    // Handle seller assignment
     if ($new_status === 'sold' && $new_user_id) {
-        // Check if sale already exists
         $check = $pdo->prepare("SELECT id FROM sales WHERE property_id = ?");
         $check->execute([$prop_id]);
 
         if ($check->fetch()) {
-            // Update existing sale
             $pdo->prepare("UPDATE sales SET user_id = ? WHERE property_id = ?")
                 ->execute([$new_user_id, $prop_id]);
         } else {
-            // Create new sale record
             $pdo->prepare("INSERT INTO sales (property_id, user_id) VALUES (?, ?)")
                 ->execute([$prop_id, $new_user_id]);
         }
     } else {
-        // Remove seller if status is no longer sold
         $pdo->prepare("DELETE FROM sales WHERE property_id = ?")->execute([$prop_id]);
     }
 
@@ -60,7 +53,7 @@ if (isset($_POST['update_status']) && isset($_POST['prop_id']) && isset($_POST['
 }
 
 // Fetch all properties
-$stmt = $pdo->query("SELECT * FROM properties");
+$stmt = $pdo->query("SELECT * FROM properties ORDER BY id DESC");
 $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -70,116 +63,131 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Properties | Assurnest Realty</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         :root {
-            --primary: #2a5bd7;
-            --primary-dark: #1e4bb9;
-            --success: #28a745;
-            --warning: #ffc107;
-            --danger: #dc3545;
-            --light: #f8f9fa;
-            --gray: #6c757d;
-            --dark: #2c3e50;
-            --sidebar-width: 250px;
+            --dark-bg: #0f1217;
+            --card-bg: #161b22;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --rich-green: #0f6b3a;
+            --rich-green-dark: #084d2a;
+            --rich-blue: #1e40af;
+            --gold: #d4af37;
+            --gold-dark: #b8860b;
+            --border: #2d3748;
+            --shadow: 0 6px 20px rgba(0,0,0,0.4);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {               font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
- background: var(--light); min-height: 100vh; color: var(--dark); }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
 
-        /* .navbar {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 1rem 2rem;
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 1000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        } */
-
-        .menu-toggle { font-size: 1.8rem; cursor: pointer; color: var(--primary); display: none; }
-
-       
+        .sidebar { width: 260px; background: linear-gradient(180deg, var(--rich-green-dark), var(--rich-green)); color: white; height: 100vh; position: fixed; left: 0; top: 0; z-index: 1000; transition: transform 0.4s ease; box-shadow: 4px 0 25px rgba(0,0,0,0.5); }
+        .navbar { position: fixed; top: 0; left: 260px; right: 0; height: 75px; background: linear-gradient(90deg, var(--gold), var(--gold-dark)); color: var(--black); box-shadow: 0 4px 20px rgba(0,0,0,0.4); z-index: 999; display: flex; align-items: center; padding: 0 30px; font-weight: 600; transition: left 0.4s ease; }
+        .mobile-menu-btn { display: none; font-size: 1.9rem; cursor: pointer; color: var(--black); }
 
         .main-content {
-            margin-left: var(--sidebar-width);
-            margin-top: 70px;
-            padding: 2rem 1.5rem;
-            transition: margin-left 0.3s ease;
+            margin-left: 260px;
+            margin-top: 75px;
+            padding: 2rem;
+            transition: margin-left 0.4s ease;
         }
 
         .container { max-width: 1400px; margin: 0 auto; }
 
-        .message { padding: 1rem; border-radius: 8px; margin: 1rem 0; text-align: center; }
-        .success { background: #d4edda; color: #155724; }
-        .deleted  { background: #f8d7da; color: #721c24; }
+        .message { 
+            padding: 1.2rem; 
+            border-radius: 10px; 
+            margin-bottom: 2rem; 
+            text-align: center; 
+            font-weight: 600; 
+            border: 2px solid var(--gold);
+        }
+        .success { background: rgba(16,185,129,0.15); color: #10b981; }
+        .deleted  { background: rgba(239,68,68,0.15); color: #ef4444; }
 
         .property-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.5rem;
         }
 
         .property-card {
-            background: white;
+            background: var(--card-bg);
+            border: 1px solid var(--gold);
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            transition: transform 0.25s;
+            box-shadow: var(--shadow);
         }
 
-        .property-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+        .card-image {
+            height: 180px;
+            background: #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .card-image { height: 200px; background: #f0f4f8; overflow: hidden; }
         .card-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.35s;
         }
-        .property-card:hover .card-image img { transform: scale(1.06); }
 
         .card-image-placeholder {
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-            color: #78909c;
-            font-size: 4.5rem;
+            font-size: 4rem;
+            color: #4b5563;
         }
 
-        .card-body { padding: 1.25rem; }
+        .card-body {
+            padding: 1.2rem;
+        }
 
-        .property-type { font-size: 1.35rem; font-weight: 700; margin-bottom: 0.5rem; }
-        .property-price { font-size: 1.6rem; font-weight: 700; color: #d81b60; margin: 0.5rem 0; }
-        .property-location { color: var(--gray); font-size: 0.95rem; margin-bottom: 1rem; }
+        .property-type {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--rich-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .property-price {
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: var(--rich-green);
+            margin: 0.4rem 0;
+        }
+
+        .property-location {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 0.8rem;
+        }
 
         .status-badge {
-            padding: 0.4rem 1rem;
+            padding: 0.5rem 1rem;
             border-radius: 50px;
             font-size: 0.85rem;
             font-weight: 600;
-            margin-bottom: 1rem;
             display: inline-block;
+            margin-bottom: 1rem;
         }
 
-        .status-available { background: #e8f5e9; color: #2e7d32; }
-        .status-sold      { background: #ffebee; color: #c62828; }
-        .status-maintenance { background: #fff3e0; color: #ef6c00; }
+        .status-available { background: rgba(15,107,58,0.15); color: var(--rich-green); border: 1px solid var(--rich-green); }
+        .status-sold      { background: rgba(220,38,38,0.15); color: #ef4444; border: 1px solid #ef4444; }
+        .status-maintenance { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid #f59e0b; }
 
         .action-buttons {
-            margin-top: 1rem;
             display: flex;
-            gap: 0.8rem;
             flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 1rem;
         }
 
         .btn {
@@ -188,83 +196,124 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
             font-weight: 600;
             font-size: 0.95rem;
             cursor: pointer;
-            text-decoration: none;
-            transition: all 0.2s;
             border: none;
-            touch-action: manipulation;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            transition: all 0.25s ease;
         }
 
-        .btn-view   { background: var(--primary); color: white; }
-        .btn-view:hover   { background: var(--primary-dark); }
-
-        .btn-edit   { background: var(--warning); color: #212529; }
-        .btn-edit:hover   { background: #e0a800; }
-
-        .btn-delete { background: var(--danger); color: white; }
-        .btn-delete:hover { background: #c82333; }
+        .btn-view   { background: var(--rich-blue); color: white; }
+        .btn-edit   { background: #f59e0b; color: white; }
+        .btn-delete { background: #ef4444; color: white; }
 
         .status-form {
+            margin-top: 1rem;
             display: flex;
             flex-wrap: wrap;
             gap: 0.8rem;
             align-items: center;
-            margin-top: 1rem;
         }
 
         .status-form select {
             padding: 0.7rem;
-            border-radius: 6px;
-            border: 1px solid #ddd;
-            min-width: 140px;
+            border-radius: 8px;
+            border: 1px solid var(--gold);
+            background: var(--card-bg);
+            color: var(--text-main);
+            min-width: 130px;
         }
 
         .status-form button {
-            background: #17a2b8;
+            background: var(--rich-green);
             color: white;
-            padding: 0.7rem 1.2rem;
+            padding: 0.7rem 1.4rem;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
+            font-weight: 600;
         }
-
-        .status-form button:hover { background: #138496; }
 
         .seller-select {
             display: none;
             padding: 0.7rem;
-            border-radius: 6px;
-            border: 1px solid #ddd;
-            min-width: 180px;
+            border-radius: 8px;
+            border: 1px solid var(--gold);
+            background: var(--card-bg);
+            color: var(--text-main);
+            min-width: 160px;
         }
 
         @media (max-width: 992px) {
-            .menu-toggle { display: block; }
+            .main-content { margin-left: 0; padding: 1.8rem 1.2rem; }
             .sidebar { transform: translateX(-100%); }
-            .sidebar.active { transform: translateX(0); }
-            .main-content, .property-grid { margin-left: 0; }
+            .sidebar.mobile-open { transform: translateX(0); }
+            .mobile-menu-btn { display: block; }
         }
 
         @media (max-width: 576px) {
-            h1 { font-size: 1.8rem; }
-            .action-buttons { flex-direction: column; gap: 0.6rem; }
-            .btn { width: 100%; text-align: center; }
+            .property-grid { grid-template-columns: 1fr; }
+            .action-buttons { flex-direction: column; }
             .status-form { flex-direction: column; align-items: stretch; }
             .status-form select, .status-form button, .seller-select { width: 100%; }
         }
+        /* From Uiverse.io by iZOXVL */ 
+.boton-elegante {
+  padding: 8px 15px;
+  border: 2px solid #2c2c2c;
+  background-color: #1a1a1a;
+  color: #ffffff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  border-radius: 30px;
+  transition: all 0.4s ease;
+  outline: none;
+  position: relative;
+  overflow: hidden;
+  font-weight: bold;
+}
+
+.boton-elegante::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  transform: scale(0);
+  transition: transform 0.5s ease;
+}
+
+.boton-elegante:hover::after {
+  transform: scale(4);
+}
+
+.boton-elegante:hover {
+  border-color: #666666;
+  background: #292929;
+}
+
     </style>
 </head>
 <body>
 
 <!-- Navbar with mobile toggle -->
 <nav class="navbar">
-    <div class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></div>
+    <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
     <?php include '../../includes/navbar.php'; ?>
 </nav>
 
 <!-- Sidebar -->
-<div class="sidebar" id="sidebar">
+<nav class="sidebar" id="sidebar">
     <?php include '../../includes/sidebaradmin.php'; ?>
-</div>
+</nav>
 
 <div class="main-content">
 
@@ -279,9 +328,9 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <h1>All Properties</h1>
 
     <?php if (empty($properties)): ?>
-        <p style="text-align:center; color:var(--gray); font-size:1.3rem;">
-            No properties found. <a href="add_property.php">Add New Property</a>
-        </p>
+        <div style="text-align:center; color:var(--text-muted); padding:4rem 0; font-size:1.3rem;">
+            No properties found yet. <a href="add_property.php" style="color:var(--rich-green); font-weight:600;">Add New Property</a>
+        </div>
     <?php else: ?>
         <div class="property-grid">
             <?php foreach ($properties as $prop): ?>
@@ -290,7 +339,7 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <?php 
                         $mainImage = $prop['image1'] ?? null;
                         if (!empty($mainImage) && filter_var($mainImage, FILTER_VALIDATE_URL)): ?>
-                            <img src="<?= htmlspecialchars($mainImage) ?>" alt="Property" loading="lazy">
+                            <img src="<?= htmlspecialchars($mainImage) ?>" alt="<?= htmlspecialchars($prop['type'] ?? 'Property') ?>" loading="lazy">
                         <?php else: ?>
                             <div class="card-image-placeholder">
                                 <i class="fas fa-building"></i>
@@ -299,62 +348,63 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
 
                     <div class="card-body">
-                        <h2 class="property-type"><?= htmlspecialchars($prop['type'] ?? 'Property') ?></h2>
+                        <div class="property-type"><?= htmlspecialchars($prop['type'] ?? 'Property') ?></div>
                         <div class="property-price">₹ <?= number_format($prop['price'] ?? 0, 2) ?></div>
                         <div class="property-location">
                             <?= htmlspecialchars(trim(implode(', ', array_filter([
                                 $prop['location'] ?? '',
                                 $prop['address'] ?? ''
-                            ])))) ?: '—' ?>
+                            ])))) ?: 'Location not specified' ?>
                         </div>
 
                         <span class="status-badge status-<?= strtolower($prop['status'] ?? 'unknown') ?>">
                             <?= ucfirst($prop['status'] ?? 'Unknown') ?>
                         </span>
 
-                        <!-- Status + Seller Update Form -->
-                        <form method="POST" class="status-form">
-                            <input type="hidden" name="prop_id" value="<?= $prop['id'] ?>">
-                            <input type="hidden" name="update_status" value="1">
-
-                            <select name="status" class="status-select" data-prop-id="<?= $prop['id'] ?>">
-                                <option value="available"     <?= $prop['status'] === 'available'     ? 'selected' : '' ?>>Available</option>
-                                <option value="sold"          <?= $prop['status'] === 'sold'          ? 'selected' : '' ?>>Sold</option>
-                                <option value="maintenance"   <?= $prop['status'] === 'maintenance'   ? 'selected' : '' ?>>Maintenance</option>
-                                <option value="on_hold"       <?= $prop['status'] === 'on_hold'       ? 'selected' : '' ?>>On Hold</option>
-                            </select>
-
-                            <!-- Seller dropdown – shown only when sold is selected -->
-                            <select name="user_id" class="seller-select" id="seller-<?= $prop['id'] ?>">
-                                <option value="">Select Agent/Seller</option>
-                                <?php foreach ($agents as $agent): ?>
-                                    <option value="<?= $agent['id'] ?>">
-                                        <?= htmlspecialchars($agent['username']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-
-                            <button type="submit">Update</button>
-                        </form>
-
+                        <!-- Status + Seller Form (admin only) -->
                         <?php if ($isAdmin): ?>
-                            <div class="action-buttons">
-                                <a href="viewProperty.php?id=<?= $prop['id'] ?>" class="btn btn-view">
-                                    <i class="fas fa-eye"></i> View
+                            <form method="POST" class="status-form">
+                                <input type="hidden" name="prop_id" value="<?= $prop['id'] ?>">
+                                <input type="hidden" name="update_status" value="1">
+
+                                <select name="status" class="status-select" data-prop-id="<?= $prop['id'] ?>">
+                                    <option value="available"     <?= $prop['status'] === 'available'     ? 'selected' : '' ?>>Available</option>
+                                    <option value="sold"          <?= $prop['status'] === 'sold'          ? 'selected' : '' ?>>Sold</option>
+                                    <option value="maintenance"   <?= $prop['status'] === 'maintenance'   ? 'selected' : '' ?>>Maintenance</option>
+                                    <option value="on_hold"       <?= $prop['status'] === 'on_hold'       ? 'selected' : '' ?>>On Hold</option>
+                                </select>
+
+                                <select name="user_id" class="seller-select" id="seller-<?= $prop['id'] ?>">
+                                    <option value="">Select Agent</option>
+                                    <?php foreach ($agents as $agent): ?>
+                                        <option value="<?= $agent['id'] ?>">
+                                            <?= htmlspecialchars($agent['username']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+
+                                <button type="submit">Update</button>
+                            </form>
+                        <?php endif; ?>
+
+                        <!-- Action Buttons -->
+                        <div class="action-buttons">
+
+                            <?php if ($isAdmin): ?>
+                                <a href="edit_property.php?id=<?= $prop['id'] ?>" class="">
+                                   <!-- From Uiverse.io by iZOXVL --> 
+<button class="boton-elegante">EDIT</button>
+
                                 </a>
-                                <a href="edit_property.php?id=<?= $prop['id'] ?>" class="btn btn-edit">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
-                                <form method="POST" style="display:inline;" 
-                                      onsubmit="return confirm('Delete this property permanently?');">
+
+                                <form method="POST" style="display:inline;" onsubmit="return confirm('Delete this property permanently?');">
                                     <input type="hidden" name="prop_id" value="<?= $prop['id'] ?>">
                                     <input type="hidden" name="delete_property" value="1">
-                                    <button type="submit" class="btn btn-delete">
-                                        <i class="fas fa-trash"></i> Delete
-                                    </button>
+                                   <!-- From Uiverse.io by iZOXVL --> 
+<button type="submit" class="boton-elegante">Delete</button>
                                 </form>
-                            </div>
-                        <?php endif; ?>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -365,37 +415,22 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <script>
 // Mobile sidebar toggle
-document.getElementById('menuToggle').addEventListener('click', function() {
-    document.getElementById('sidebar').classList.toggle('active');
-});
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('mobile-open');
+}
 
-// Close sidebar when clicking outside on mobile
-document.addEventListener('click', function(e) {
-    const sidebar = document.getElementById('sidebar');
-    const toggle = document.getElementById('menuToggle');
-    if (window.innerWidth <= 992 &&
-        !sidebar.contains(e.target) &&
-        !toggle.contains(e.target)) {
-        sidebar.classList.remove('active');
-    }
-});
+document.getElementById('mobileMenuBtn')?.addEventListener('click', toggleSidebar);
 
 // Show/hide seller dropdown when status = sold
 document.querySelectorAll('.status-select').forEach(select => {
     select.addEventListener('change', function() {
         const propId = this.getAttribute('data-prop-id');
         const sellerSelect = document.getElementById('seller-' + propId);
-        if (this.value === 'sold') {
-            sellerSelect.style.display = 'block';
-            sellerSelect.required = true;
-        } else {
-            sellerSelect.style.display = 'none';
-            sellerSelect.required = false;
-            sellerSelect.value = ''; // clear selection
-        }
+        sellerSelect.style.display = this.value === 'sold' ? 'block' : 'none';
+        sellerSelect.required = this.value === 'sold';
     });
 
-    // Trigger on page load
+    // Trigger on load
     select.dispatchEvent(new Event('change'));
 });
 </script>

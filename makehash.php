@@ -3,7 +3,7 @@
 // ────────────────────────────────────────────────
 //       CHANGE ONLY THIS LINE ↓↓↓
 // ────────────────────────────────────────────────
-$your_plain_password = '123456';     // ← Put your desired password here
+$your_plain_password = 'assurnest@123';     // ← Put your desired password here
 
 // ────────────────────────────────────────────────
 //       Do NOT change anything below
