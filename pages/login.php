@@ -439,7 +439,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
             
-            <h1 class="welcome-title">Welcome Back to Assurnest Realty</h1>
+            <h1 class="welcome-title">Assurnest Realty</h1>
             <p class="welcome-text">
                 Sign in to access your dashboard and manage properties, sales, and client relationships. 
                 Join thousands of real estate professionals who trust Assurnest Realty for premium property management.
