@@ -11,53 +11,112 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 // Safe defaults
 $admin = ['username' => 'Admin'];
 $stats = [
-    'total_properties' => 0,
-    'sold_properties' => 0,
-    'available_properties' => 0,
-    'maintenance_properties' => 0,
-    'total_sales_value' => 0
+    'total_properties'      => 0,
+    'sold_properties'       => 0,
+    'available_properties'  => 0,
+    'total_commission'      => 0,
+    'total_employees'       => 0,
+    'total_drivers'         => 0,
+    'pending_employees'     => 0,
+    'pending_drivers'       => 0,
+    'top_earners'           => []
 ];
-$properties = [];
-$pending_users = [];
 
 // Fetch admin name
 try {
-    $stmt = $pdo->prepare("SELECT username FROM users WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT admin_name FROM admins WHERE admin_id = ?");
     $stmt->execute([$_SESSION['user_id']]);
     $admin = $stmt->fetch(PDO::FETCH_ASSOC) ?: $admin;
 } catch (Exception $e) {
     error_log("Admin fetch error: " . $e->getMessage());
 }
 
-// Fetch stats & data
+// Handle approval (employees & cab drivers)
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['approve'])) {
+    $id     = (int)$_GET['approve'];
+    $type   = $_GET['type'] ?? '';
+
+    if ($type === 'employee') {
+        $pdo->prepare("UPDATE employees SET status = 'active' WHERE emp_id = ?")
+            ->execute([$id]);
+        header("Location: admin_dashboard.php?approved=employee");
+        exit;
+    } elseif ($type === 'driver') {
+        $pdo->prepare("UPDATE cab_drivers SET status = 'active' WHERE driver_id = ?")
+            ->execute([$id]);
+        header("Location: admin_dashboard.php?approved=driver");
+        exit;
+    }
+}
+
+// Fetch dashboard statistics
 try {
-    // Total properties
+    // Properties stats
     $stmt = $pdo->query("SELECT COUNT(*) FROM properties");
     $stats['total_properties'] = $stmt->fetchColumn() ?: 0;
 
-    // Status counts
     $stmt = $pdo->query("SELECT status, COUNT(*) as cnt FROM properties GROUP BY status");
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        switch ($row['status']) {
-            case 'available':   $stats['available_properties']   = $row['cnt']; break;
-            case 'sold':        $stats['sold_properties']        = $row['cnt']; break;
-            case 'maintenance': $stats['maintenance_properties'] = $row['cnt']; break;
-        }
+        if ($row['status'] === 'sold')     $stats['sold_properties']      = $row['cnt'];
+        if ($row['status'] === 'available') $stats['available_properties'] = $row['cnt'];
     }
 
-    // Total sales value
-    $stmt = $pdo->query("SELECT SUM(price) as total FROM properties WHERE status = 'sold'");
-    $stats['total_sales_value'] = $stmt->fetchColumn() ?: 0;
+    // Commission total (employees + drivers)
+    $stmt = $pdo->query("SELECT SUM(commission) as total FROM employees");
+    $emp_comm = $stmt->fetchColumn() ?: 0;
 
-    // Recent properties (5 latest)
-    $stmt = $pdo->query("SELECT id, type, location, price, status, image1 FROM properties ORDER BY id DESC LIMIT 3");
+    $stmt = $pdo->query("SELECT SUM(commission + referral_bonus) as total FROM cab_drivers");
+    $driver_comm = $stmt->fetchColumn() ?: 0;
+
+    $stats['total_commission'] = $emp_comm + $driver_comm;
+
+    // Counts
+    $stmt = $pdo->query("SELECT COUNT(*) FROM employees");
+    $stats['total_employees'] = $stmt->fetchColumn() ?: 0;
+
+    $stmt = $pdo->query("SELECT COUNT(*) FROM cab_drivers");
+    $stats['total_drivers'] = $stmt->fetchColumn() ?: 0;
+
+    // Pending approvals
+    $stmt = $pdo->query("SELECT COUNT(*) FROM employees WHERE status != 'active'");
+    $stats['pending_employees'] = $stmt->fetchColumn() ?: 0;
+
+    $stmt = $pdo->query("SELECT COUNT(*) FROM cab_drivers WHERE status != 'active'");
+    $stats['pending_drivers'] = $stmt->fetchColumn() ?: 0;
+
+    // Pending employees list
+    $stmt = $pdo->query("SELECT emp_id, emp_name, mobile_no, email, enrollment_date 
+                         FROM employees WHERE status != 'active' ORDER BY enrollment_date DESC LIMIT 5");
+    $pending_employees = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
+    // Pending cab drivers list
+    $stmt = $pdo->query("SELECT driver_id, driver_name, mobile_no, email, enrollment_date 
+                         FROM cab_drivers WHERE status != 'active' ORDER BY enrollment_date DESC LIMIT 5");
+    $pending_drivers = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
+    // Top 3 earners (combined commission + referral)
+    $stmt = $pdo->query("
+        SELECT 'employee' as type, emp_id as id, emp_name as name, commission + referral_bonus as earnings
+        FROM employees
+        UNION ALL
+        SELECT 'driver' as type, driver_id as id, driver_name as name, commission + referral_bonus as earnings
+        FROM cab_drivers
+        ORDER BY earnings DESC
+        LIMIT 3
+    ");
+    $stats['top_earners'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Recent properties (last 5)
+    $stmt = $pdo->query("
+        SELECT property_id as id, property_type as type, property_name, location_city, location_area, price, status, image1 
+        FROM properties 
+        ORDER BY property_id DESC 
+        LIMIT 5
+    ");
     $properties = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
-    // Pending user approvals
-    $stmt = $pdo->query("SELECT id, username, email, created_at FROM users WHERE approved = 0 AND role = 'user' ORDER BY created_at DESC LIMIT 6");
-    $pending_users = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 } catch (Exception $e) {
-    error_log("Dashboard error: " . $e->getMessage());
+    error_log("Dashboard stats error: " . $e->getMessage());
 }
 ?>
 
@@ -76,25 +135,34 @@ try {
             --text-muted: #94a3b8;
             --rich-green: #0f6b3a;
             --rich-green-dark: #084d2a;
-            --rich-blue: #efefef;
+            --rich-blue: #1e40af;
             --gold: #d4af37;
             --gold-dark: #b8860b;
             --border: #2d3748;
+            --shadow: 0 6px 20px rgba(0,0,0,0.4);
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            margin: 0;
             font-family: 'Segoe UI', system-ui, sans-serif;
             background: var(--bg-main);
             color: var(--text-main);
             min-height: 100vh;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1.5rem;
+        .sidebar { width: 260px; background: linear-gradient(180deg, var(--rich-green-dark), var(--rich-green)); color: white; height: 100vh; position: fixed; left: 0; top: 0; z-index: 1000; transition: transform 0.4s ease; box-shadow: 4px 0 25px rgba(0,0,0,0.5); }
+        .navbar { position: fixed; top: 0; left: 260px; right: 0; height: 75px; background: linear-gradient(90deg, var(--gold), var(--gold-dark)); color: var(--black); box-shadow: 0 4px 20px rgba(0,0,0,0.4); z-index: 999; display: flex; align-items: center; padding: 0 30px; font-weight: 600; transition: left 0.4s ease; }
+        .mobile-menu-btn { display: none; font-size: 1.9rem; cursor: pointer; color: var(--black); }
+
+        .main-content {
+            margin-left: 260px;
+            margin-top: 75px;
+            padding: 2rem;
+            transition: margin-left 0.4s ease;
         }
+
+        .container { max-width: 1400px; margin: 0 auto; }
 
         .welcome {
             font-size: 1.9rem;
@@ -103,27 +171,17 @@ try {
             color: var(--rich-green);
         }
 
-        /* Stats – one line, small cards, golden border */
         .stats-row {
             display: flex;
             flex-wrap: wrap;
             gap: 1rem;
             margin-bottom: 2.5rem;
         }
-        .main-content {
-    margin-left: var(--sidebar-width);   /* Must match sidebar width */
-    margin-top: var(--navbar-height);    /* For navbar */
-    padding: 2rem 1.5rem;
-    min-height: 100vh;                   /* Full height */
-    background: var(--light-bg);         /* Helps see if overlapped */
-    position: relative;                  /* Prevents z-index issues */
-    z-index: 1;                          /* Content above sidebar if needed */
-}
 
         .stat-card {
             flex: 1;
             min-width: 180px;
-            background: var(--bg-card);
+            background: var(--card-bg);
             border: 1px solid var(--gold);
             border-radius: 12px;
             padding: 1.2rem 1.4rem;
@@ -144,15 +202,14 @@ try {
             letter-spacing: 0.5px;
         }
 
-        /* Recent Properties – Amazon-style cards, one row */
-        .recent-title {
+        .section-title {
             font-size: 1.5rem;
             font-weight: 700;
-            margin: 2.5rem 0 1.2rem;
+            margin: 3rem 0 1.2rem;
             color: var(--rich-blue);
         }
 
-        .properties-row {
+        .properties-row, .earners-row {
             display: flex;
             overflow-x: auto;
             gap: 1.2rem;
@@ -160,10 +217,10 @@ try {
             scrollbar-width: thin;
         }
 
-        .property-card {
+        .property-card, .earner-card {
             flex: 0 0 240px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
+            background: var(--card-bg);
+            border: 1px solid var(--gold);
             border-radius: 12px;
             overflow: hidden;
         }
@@ -182,43 +239,38 @@ try {
             object-fit: cover;
         }
 
-        .prop-body {
+        .prop-body, .earner-body {
             padding: 1rem;
+            text-align: center;
         }
 
-        .prop-type {
+        .prop-type, .earner-name {
             font-size: 1.1rem;
             font-weight: 600;
             color: var(--text-main);
             margin-bottom: 0.4rem;
         }
 
-        .prop-price {
+        .prop-price, .earner-earnings {
             font-size: 1.25rem;
             font-weight: 700;
             color: var(--rich-green);
         }
 
-        .prop-location {
+        .prop-location, .earner-type {
             font-size: 0.9rem;
             color: var(--text-muted);
             margin-top: 0.3rem;
         }
 
-        /* Pending Approvals */
-        .pending-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin: 3rem 0 1.2rem;
-            color: var(--rich-blue);
-        }
-
         .pending-table {
             width: 100%;
             border-collapse: collapse;
-            background: var(--bg-card);
+            background: var(--card-bg);
             border-radius: 12px;
             overflow: hidden;
+            border: 1px solid var(--gold);
+            margin-bottom: 2rem;
         }
 
         .pending-table th, .pending-table td {
@@ -236,7 +288,7 @@ try {
         .btn-approve {
             background: var(--rich-green);
             color: white;
-            border: none;
+            border: 2px solid var(--gold);
             padding: 0.6rem 1.2rem;
             border-radius: 8px;
             cursor: pointer;
@@ -248,12 +300,15 @@ try {
         }
 
         @media (max-width: 992px) {
-            .main-content { padding: 1.5rem; }
+            .main-content { margin-left: 0; padding: 1.5rem; }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.mobile-open { transform: translateX(0); }
+            .mobile-menu-btn { display: block; }
         }
 
         @media (max-width: 768px) {
             .stats-row { flex-direction: column; }
-            .properties-row { flex-direction: column; }
+            .properties-row, .earners-row { flex-direction: column; }
         }
     </style>
 </head>
@@ -266,6 +321,9 @@ try {
 
 <!-- Navbar -->
 <nav class="navbar">
+    <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
     <?php include '../../includes/navbar.php'; ?>
 </nav>
 
@@ -273,10 +331,10 @@ try {
 
     <!-- Welcome -->
     <div class="welcome">
-        Welcome back, <?= htmlspecialchars($admin['username'] ?? 'Admin') ?>!
+        Welcome back, <?= htmlspecialchars($admin['admin_name'] ?? 'Admin') ?>!
     </div>
 
-    <!-- Stats – one horizontal line, small cards, golden border -->
+    <!-- Stats -->
     <div class="stats-row">
         <div class="stat-card">
             <div class="stat-value"><?= $stats['total_properties'] ?></div>
@@ -291,15 +349,43 @@ try {
             <div class="stat-label">Sold</div>
         </div>
         <div class="stat-card">
-            <div class="stat-value">₹ <?= number_format($stats['total_sales_value'], 0) ?></div>
-            <div class="stat-label">Sales Value</div>
+            <div class="stat-value">₹ <?= number_format($stats['total_commission'], 0) ?></div>
+            <div class="stat-label">Total Commission</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value"><?= $stats['total_employees'] ?></div>
+            <div class="stat-label">Employees</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value"><?= $stats['total_drivers'] ?></div>
+            <div class="stat-label">Cab Drivers</div>
         </div>
     </div>
 
-    <!-- Recent Properties – compact cards in one row (horizontal scroll on mobile) -->
-    <div class="recent-title">Recent Properties</div>
+    <!-- Top 3 Earners -->
+    <div class="section-title">Top 3 Earners (Commission + Referral)</div>
+    <?php if (empty($stats['top_earners'])): ?>
+        <div style="text-align:center; color:var(--text-muted); padding:2rem 0;">
+            No earnings data available yet.
+        </div>
+    <?php else: ?>
+        <div class="earners-row">
+            <?php foreach ($stats['top_earners'] as $earner): ?>
+                <div class="earner-card">
+                    <div class="earner-body">
+                        <div class="earner-name"><?= htmlspecialchars($earner['name']) ?></div>
+                        <div class="earner-type"><?= ucfirst($earner['type']) ?></div>
+                        <div class="earner-earnings">₹ <?= number_format($earner['earnings'], 0) ?></div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
+    <!-- Recent Properties -->
+    <div class="section-title">Recent Properties</div>
     <?php if (empty($properties)): ?>
-        <div style="text-align:center; color:#94a3b8; padding:3rem 0;">
+        <div style="text-align:center; color:var(--text-muted); padding:3rem 0;">
             No recent properties found.
         </div>
     <?php else: ?>
@@ -314,39 +400,82 @@ try {
                         <?php endif; ?>
                     </div>
                     <div class="prop-body">
-                        <div class="prop-type"><?= htmlspecialchars($p['type'] ?? 'Property') ?></div>
+                        <div class="prop-type"><?= htmlspecialchars($p['property_type'] ?? 'Property') ?></div>
                         <div class="prop-price">₹ <?= number_format($p['price'] ?? 0, 0) ?></div>
-                        <div class="prop-location"><?= htmlspecialchars($p['location'] ?? '—') ?></div>
+                        <div class="prop-location">
+                            <?= htmlspecialchars($p['location_city'] ?? '—') ?>, 
+                            <?= htmlspecialchars($p['location_area'] ?? '—') ?>
+                        </div>
+                        <span class="status-badge status-<?= strtolower($p['status'] ?? 'available') ?>">
+                            <?= ucfirst($p['status'] ?? 'Available') ?>
+                        </span>
                     </div>
                 </div>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
 
-    <!-- Pending User Approvals -->
-    <div class="pending-title">Pending User Approvals</div>
-    <?php if (empty($pending_users)): ?>
-        <div style="text-align:center; color:#94a3b8; padding:3rem 0;">
-            No pending approvals at the moment.
+    <!-- Pending Employee Approvals -->
+    <div class="section-title">Pending Employee Approvals (<?= $stats['pending_employees'] ?>)</div>
+    <?php if (empty($pending_employees)): ?>
+        <div style="text-align:center; color:var(--text-muted); padding:2rem 0;">
+            No pending employee approvals.
         </div>
     <?php else: ?>
         <table class="pending-table">
             <thead>
                 <tr>
-                    <th>Username</th>
+                    <th>Name</th>
+                    <th>Mobile</th>
                     <th>Email</th>
-                    <th>Registered</th>
+                    <th>Enrolled</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($pending_users as $u): ?>
+                <?php foreach ($pending_employees as $e): ?>
                     <tr>
-                        <td><?= htmlspecialchars($u['username']) ?></td>
-                        <td><?= htmlspecialchars($u['email']) ?></td>
-                        <td><?= date('d M Y', strtotime($u['created_at'])) ?></td>
+                        <td><?= htmlspecialchars($e['emp_name']) ?></td>
+                        <td><?= htmlspecialchars($e['mobile_no']) ?></td>
+                        <td><?= htmlspecialchars($e['email']) ?></td>
+                        <td><?= date('d M Y', strtotime($e['enrollment_date'])) ?></td>
                         <td>
-                            <a href="?approve=<?= $u['id'] ?>" class="btn-approve">
+                            <a href="?approve=<?= $e['emp_id'] ?>&type=employee" class="btn-approve">
+                                Approve
+                            </a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+
+    <!-- Pending Cab Driver Approvals -->
+    <div class="section-title">Pending Cab Driver Approvals (<?= $stats['pending_drivers'] ?>)</div>
+    <?php if (empty($pending_drivers)): ?>
+        <div style="text-align:center; color:var(--text-muted); padding:2rem 0;">
+            No pending cab driver approvals.
+        </div>
+    <?php else: ?>
+        <table class="pending-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>Enrolled</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($pending_drivers as $d): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($d['driver_name']) ?></td>
+                        <td><?= htmlspecialchars($d['mobile_no']) ?></td>
+                        <td><?= htmlspecialchars($d['email']) ?></td>
+                        <td><?= date('d M Y', strtotime($d['enrollment_date'])) ?></td>
+                        <td>
+                            <a href="?approve=<?= $d['driver_id'] ?>&type=driver" class="btn-approve">
                                 Approve
                             </a>
                         </td>
@@ -362,9 +491,7 @@ try {
 function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('mobile-open');
 }
-
 document.getElementById('mobileMenuBtn')?.addEventListener('click', toggleSidebar);
 </script>
-
 </body>
 </html>
