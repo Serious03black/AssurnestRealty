@@ -2,76 +2,65 @@
 session_start();
 include '../../includes/db.php';
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'user') {
-    header('Location: .../login.php');
+// Check login
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['employee', 'driver'])) {
+    header('Location: ../login.php');
     exit;
 }
 
 $user_id = $_SESSION['user_id'];
+$role    = $_SESSION['role']; // 'employee' or 'driver'
 
-// Get user info
-$user_stmt = $pdo->prepare("SELECT username FROM users WHERE id = ?");
-$user_stmt->execute([$user_id]);
-$user = $user_stmt->fetch();
-
-// Fetch all properties
-$stmt = $pdo->query("SELECT * FROM properties");
-$properties = $stmt->fetchAll();
-
-// Fetch properties sold by this user
-$stmt = $pdo->prepare("SELECT p.* FROM properties p JOIN sales s ON p.id = s.property_id WHERE s.user_id = ?");
-$stmt->execute([$user_id]);
-$sold_by_me = $stmt->fetchAll();
-
-// Leaderboard - top sellers
-$stmt = $pdo->query("
-    SELECT u.username, COUNT(s.id) as sales_count 
-    FROM users u 
-    LEFT JOIN sales s ON u.id = s.user_id 
-    WHERE u.role = 'user' 
-    GROUP BY u.id 
-    ORDER BY sales_count DESC 
-    LIMIT 10
-");
-$leaderboard = $stmt->fetchAll();
-
-// Calculate statistics
-$total_properties = count($properties);
-$available_properties = count(array_filter($properties, function($p) { return $p['status'] === 'available'; }));
-$my_sales = count($sold_by_me);
-$my_commission = array_sum(array_map(function($p) { 
-    return ($p['price'] * $p['commission'] / 100); 
-}, $sold_by_me));
-
-// Find current user's rank & sales count
-$user_rank = 'Not ranked yet';
-$user_sales_count = 0;
-
-foreach ($leaderboard as $rank => $l) {
-    if ($l['username'] == $user['username']) {
-        $user_rank = $rank + 1;
-        $user_sales_count = $l['sales_count'];
-        break;
-    }
+// 1. Get User Info
+if ($role === 'employee') {
+    $stmt = $pdo->prepare("SELECT emp_name AS name, monthly_rank, total_properties_sold, commission, referral_bonus FROM employees WHERE emp_id = ?");
+    $stmt->execute([$user_id]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+} else {
+    $stmt = $pdo->prepare("SELECT driver_name AS name, monthly_rank, total_properties_sold, commission, referral_bonus FROM cab_drivers WHERE driver_id = ?");
+    $stmt->execute([$user_id]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
-// If user not in top 10 → calculate exact rank
-if ($user_rank === 'Not ranked yet' && $my_sales > 0) {
-    $rank_stmt = $pdo->prepare("
-        SELECT COUNT(*) + 1 AS rank
-        FROM (
-            SELECT COUNT(s.id) AS sales_count
-            FROM sales s
-            JOIN users u ON s.user_id = u.id
-            WHERE u.role = 'user'
-            GROUP BY u.id
-            HAVING sales_count > ?
-        ) AS higher
-    ");
-    $rank_stmt->execute([$my_sales]);
-    $rank_row = $rank_stmt->fetch(PDO::FETCH_ASSOC);
-    $user_rank = $rank_row['rank'] ?? 'Not ranked';
+if (!$user) {
+    echo "User not found.";
+    exit;
 }
+
+$user_name = $user['name'];
+$my_rank   = $user['monthly_rank'] ?? 'Not Ranked';
+$my_sales  = $user['total_properties_sold'] ?? 0;
+$my_comm   = $user['commission'] ?? 0.00;
+//$my_bonus  = $user['referral_bonus'] ?? 0.00; 
+// Total earnings can be commission + bonus if applicable, but for now showing commission based on previous code.
+
+// 2. Fetch Available Properties
+$stmt = $pdo->query("SELECT * FROM properties WHERE status = 'available' ORDER BY property_id DESC");
+$properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$total_properties_count = count($properties); // Count of available ones ideally? Or all? 
+// Let's count all properties for stats
+$count_stmt = $pdo->query("SELECT COUNT(*) FROM properties");
+$all_props_count = $count_stmt->fetchColumn();
+
+
+// 3. Leaderboard - Top 3 (Mixed employees and drivers? Or separate? 
+// The schema has `monthly_ranking` table. Let's use that if populated, or fallback to sales count.
+// For simplicity and robustness, let's query the top sellers from both tables combined if monthly_ranking isn't ready.
+// Actually, let's try to query `employees` AND `cab_drivers` union for top sales.
+
+$leaderboard_sql = "
+    SELECT name, total_properties_sold, role FROM (
+        SELECT emp_name AS name, total_properties_sold, 'employee' as role FROM employees
+        UNION ALL
+        SELECT driver_name AS name, total_properties_sold, 'driver' as role FROM cab_drivers
+    ) as owners
+    ORDER BY total_properties_sold DESC
+    LIMIT 3
+";
+$lb_stmt = $pdo->query($leaderboard_sql);
+$leaderboard = $lb_stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
@@ -79,7 +68,7 @@ if ($user_rank === 'Not ranked yet' && $my_sales > 0) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | Assurnest Realty Agent</title>
+    <title>Dashboard | Assurnest Realty</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -93,7 +82,6 @@ if ($user_rank === 'Not ranked yet' && $my_sales > 0) {
             --gray: #6c757d;
             --light-gray: #e9ecef;
             --sidebar-width: 250px;
-            /* --navbar-height: 70px; */
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -101,7 +89,7 @@ if ($user_rank === 'Not ranked yet' && $my_sales > 0) {
         body {
             background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
             min-height: 100vh;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: var(--dark);
         }
 
@@ -121,7 +109,6 @@ if ($user_rank === 'Not ranked yet' && $my_sales > 0) {
 
         .main-content {
             margin-left: var(--sidebar-width);
-            /* margin-top: var(--navbar-height); */
             padding: 2rem 1.5rem;
             transition: margin-left 0.3s ease;
         }
@@ -155,28 +142,25 @@ if ($user_rank === 'Not ranked yet' && $my_sales > 0) {
         .ladder-step:nth-child(1) { animation-delay: 0.2s; }
         .ladder-step:nth-child(2) { animation-delay: 0.4s; }
         .ladder-step:nth-child(3) { animation-delay: 0.6s; }
-        .ladder-step.your-rank { animation-delay: 0.8s; }
 
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .rank-podium {
-            width: 120px;
-            position: relative;
-            margin: 0 auto;
-        }
-
         .podium-place {
-            width: 100%;
+            width: 120px;
             background: linear-gradient(135deg, #fff, #f0f0f0);
             border-radius: 10px 10px 0 0;
             padding: 2rem 0;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: bold;
             color: #333;
             text-align: center;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 10px;
         }
 
         .podium-1 { height: 140px; background: linear-gradient(#FFD700, #ffca28); color: #333; }
@@ -201,20 +185,10 @@ if ($user_rank === 'Not ranked yet' && $my_sales > 0) {
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
-        .rank-name {
-            margin-top: 2.5rem;
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
         .rank-stats {
             color: #555;
             font-size: 0.9rem;
-        }
-
-        .your-rank {
-            background: #e3f2fd !important;
-            border: 3px solid var(--primary);
+            margin-top: 5px;
         }
 
         /* Horizontal Cards */
@@ -268,6 +242,13 @@ if ($user_rank === 'Not ranked yet' && $my_sales > 0) {
             justify-content: center;
             color: #aaa;
             font-size: 3rem;
+            overflow: hidden;
+        }
+        
+        .prop-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .prop-body { padding: 1.2rem; }
@@ -291,11 +272,6 @@ if ($user_rank === 'Not ranked yet' && $my_sales > 0) {
             .sidebar.mobile-open { transform: translateX(0); }
             .mobile-menu-btn { display: block; }
         }
-
-        @media (max-width: 576px) {
-            .horizontal-cards { grid-template-columns: 1fr; }
-            .profile-header { flex-direction: column; text-align: center; }
-        }
     </style>
 </head>
 <body>
@@ -305,14 +281,13 @@ if ($user_rank === 'Not ranked yet' && $my_sales > 0) {
     <?php include '../../includes/sidebaruser.php'; ?>
 </nav>
 
-
 <!-- Main Content -->
 <div class="main-content">
 
     <!-- Welcome + Rank -->
     <div class="welcome-section">
         <h1 class="welcome-title">
-            Welcome back, <?= htmlspecialchars($user['username'] ?? 'Agent') ?>! 🏠
+            Welcome back, <?= htmlspecialchars($user_name) ?>! 🏠
         </h1>
 
         <!-- Your Current Rank -->
@@ -329,41 +304,31 @@ if ($user_rank === 'Not ranked yet' && $my_sales > 0) {
             border-left: 6px solid var(--primary);
         ">
             <i class="fas fa-trophy" style="color:#FFD700; margin-right:0.8rem;"></i>
-            Your Current Rank: <span style="font-size:1.6rem; color:#000;"><?= htmlspecialchars($user_rank) ?></span>
+            Your Monthly Rank: <span style="font-size:1.6rem; color:#000;">#<?= htmlspecialchars($my_rank) ?></span>
         </div>
 
         <!-- Top 3 Ladder -->
         <div class="ladder-container">
             <?php 
-            $top3 = array_slice($leaderboard, 0, 3);
             $podium_heights = [140, 110, 80];
             $podium_colors = ['#FFD700', '#C0C0C0', '#CD7F32'];
-            foreach ($top3 as $i => $top): ?>
+            
+            foreach ($leaderboard as $i => $top): ?>
                 <div class="ladder-step" style="animation-delay: <?= $i * 0.3 ?>s;">
                     <div class="rank-avatar" style="background: <?= $podium_colors[$i] ?>;">
                         <?= $i + 1 ?>
                     </div>
                     <div class="podium-place podium-<?= $i+1 ?>" style="height: <?= $podium_heights[$i] ?>px;">
-                        <?= htmlspecialchars($top['username']) ?>
+                        <div>
+                            <?= htmlspecialchars($top['name']) ?><br>
+                            <small>(<?= $top['role'] ?>)</small>
+                        </div>
                     </div>
                     <div class="rank-stats">
-                        <?= $top['sales_count'] ?> sales
+                        <?= $top['total_properties_sold'] ?> sales
                     </div>
                 </div>
             <?php endforeach; ?>
-
-            <!-- Your Rank (always shown) -->
-            <div class="ladder-step your-rank" style="animation-delay: 0.9s;">
-                <div class="rank-avatar" style="background: #17a2b8;">
-                    <?= $user_rank ?>
-                </div>
-                <div class="podium-place" style="height:60px; background:#e3f2fd; color:#1565c0;">
-                    <?= htmlspecialchars($user['username']) ?> (You)
-                </div>
-                <div class="rank-stats">
-                    <?= $user_sales_count ?> sales
-                </div>
-            </div>
         </div>
     </div>
 
@@ -371,13 +336,13 @@ if ($user_rank === 'Not ranked yet' && $my_sales > 0) {
     <div class="horizontal-cards">
         <div class="short-card">
             <div class="card-icon"><i class="fas fa-home"></i></div>
-            <div class="card-value"><?= $total_properties ?></div>
+            <div class="card-value"><?= $all_props_count ?></div>
             <div class="card-label">Total Properties</div>
         </div>
         <div class="short-card">
             <div class="card-icon"><i class="fas fa-key"></i></div>
-            <div class="card-value"><?= $available_properties ?></div>
-            <div class="card-label">Available</div>
+            <div class="card-value"><?= count($properties) ?></div>
+            <div class="card-label">Available Now</div>
         </div>
         <div class="short-card">
             <div class="card-icon"><i class="fas fa-handshake"></i></div>
@@ -386,37 +351,31 @@ if ($user_rank === 'Not ranked yet' && $my_sales > 0) {
         </div>
         <div class="short-card">
             <div class="card-icon"><i class="fas fa-dollar-sign"></i></div>
-            <div class="card-value">₹ <?= number_format($my_commission, 2) ?></div>
-            <div class="card-label">My Commission</div>
+            <div class="card-value">₹ <?= number_format($my_comm, 2) ?></div>
+            <div class="card-label">Total Earnings</div>
         </div>
     </div>
 
     <!-- All Available Properties -->
     <h2 style="margin: 2rem 0 1rem; text-align:center;">Available Properties</h2>
     <div class="properties-grid">
-        <?php 
-        $available_list = array_filter($properties, function($p) { 
-            return $p['status'] === 'available'; 
-        });
-        if (empty($available_list)): ?>
+        <?php if (empty($properties)): ?>
             <p style="text-align:center; color:var(--gray); grid-column: 1 / -1;">
                 No available properties at the moment.
             </p>
         <?php else: ?>
-            <?php foreach ($available_list as $prop): ?>
+            <?php foreach ($properties as $prop): ?>
                 <div class="property-card">
                     <div class="prop-image">
-                        <?php if (!empty($prop['image1'])): ?>
-                            <img src="<?= htmlspecialchars($prop['image1']) ?>" alt="Property" style="width:100%; height:100%; object-fit:cover;">
-                        <?php else: ?>
-                            <i class="fas fa-home"></i>
-                        <?php endif; ?>
+                         <img src="../../includes/view_image.php?id=<?= $prop['property_id'] ?>&num=1" alt="Property">
                     </div>
                     <div class="prop-body">
-                        <div class="prop-title"><?= htmlspecialchars($prop['type']) ?></div>
+                        <div class="prop-title"><?= htmlspecialchars($prop['property_name']) ?></div>
                         <div class="prop-price">₹ <?= number_format($prop['price'], 2) ?></div>
-                        <div class="prop-loc"><?= htmlspecialchars($prop['location']) ?></div>
-                        <a href="viewProperty.php?id=<?= $prop['id'] ?>" class="prop-btn">
+                        <div class="prop-loc">
+                            <i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($prop['location_city']) ?>
+                        </div>
+                        <a href="viewProperty.php?id=<?= $prop['property_id'] ?>" class="prop-btn">
                             View Details
                         </a>
                     </div>

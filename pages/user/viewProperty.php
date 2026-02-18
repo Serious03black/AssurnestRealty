@@ -8,24 +8,19 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    header('Location: available_properties.php?error=invalid');
+    header('Location: user_dashboard.php');
     exit;
 }
 
 $prop_id = (int)$_GET['id'];
 
 // Fetch property details
-$stmt = $pdo->prepare("
-    SELECT id, type, location, address, price, commission, status, 
-           image1, image2, image3, image4, video
-    FROM properties 
-    WHERE id = ?
-");
+$stmt = $pdo->prepare("SELECT * FROM properties WHERE property_id = ?");
 $stmt->execute([$prop_id]);
 $property = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$property) {
-    header('Location: available_properties.php?error=not_found');
+    echo "Property not found.";
     exit;
 }
 ?>
@@ -35,7 +30,7 @@ if (!$property) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($property['type'] ?? 'Property') ?> Details | Assurnest Realty</title>
+    <title><?= htmlspecialchars($property['property_name']) ?> | Assurnest Realty</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <style>
         :root {
@@ -45,18 +40,14 @@ if (!$property) {
             --gray: #6c757d;
             --dark: #2c3e50;
             --sidebar-width: 250px;
-            --navbar-height: 70px;
         }
 
-        body {                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
- background: var(--light); margin: 0; color: var(--dark); }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--light); margin: 0; color: var(--dark); }
         .sidebar { width: var(--sidebar-width); background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%); color: white; height: 100vh; position: fixed; left: 0; top: 0; z-index: 1000; transition: transform 0.3s ease; }
-        /* .navbar { position: fixed; top: 0; left: var(--sidebar-width); right: 0; height: var(--navbar-height); background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); z-index: 999; display: flex; align-items: center; padding: 0 20px; } */
         .mobile-menu-btn { display: none; font-size: 1.8rem; cursor: pointer; color: var(--dark); }
 
         .main-content {
             margin-left: var(--sidebar-width);
-            margin-top: var(--navbar-height);
             padding: 2rem 1.5rem;
             transition: margin-left 0.3s ease;
         }
@@ -80,14 +71,14 @@ if (!$property) {
             margin-bottom: 2rem;
         }
 
-        .property-title { font-size: 2.4rem; margin: 0; color: var(--dark); }
+        .property-title { font-size: 2.2rem; margin: 0; color: var(--dark); }
 
         .price-tag {
-            font-size: 2.2rem;
+            font-size: 2rem;
             font-weight: 700;
             color: #d81b60;
             background: rgba(216, 27, 96, 0.1);
-            padding: 0.8rem 1.5rem;
+            padding: 0.6rem 1.2rem;
             border-radius: 12px;
         }
 
@@ -102,18 +93,18 @@ if (!$property) {
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            height: 250px;
+            background: #eee;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             transition: transform 0.3s;
         }
 
-        .gallery-item:hover {
-            transform: scale(1.03);
-        }
-
-        .gallery-item img, .gallery-item video {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-        }
+        .gallery-item img:hover { transform: scale(1.03); }
 
         .details-card {
             background: white;
@@ -128,12 +119,14 @@ if (!$property) {
             margin-bottom: 1.2rem;
             gap: 1rem;
             flex-wrap: wrap;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.8rem;
         }
 
         .detail-label {
             font-weight: 600;
             color: var(--gray);
-            min-width: 140px;
+            min-width: 160px;
         }
 
         .detail-value {
@@ -142,10 +135,10 @@ if (!$property) {
         }
 
         .status-badge {
-            padding: 0.6rem 1.3rem;
+            padding: 0.5rem 1rem;
             border-radius: 50px;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.9rem;
             display: inline-block;
         }
 
@@ -159,11 +152,6 @@ if (!$property) {
             .sidebar.mobile-open { transform: translateX(0); }
             .mobile-menu-btn { display: block; }
         }
-
-        @media (max-width: 576px) {
-            .property-title { font-size: 1.9rem; }
-            .price-tag { font-size: 1.8rem; }
-        }
     </style>
 </head>
 <body>
@@ -176,39 +164,33 @@ if (!$property) {
 
 <div class="main-content">
 
-    <a href="available_properties.php" class="back-link">← Back to Available Properties</a>
+    <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()" style="border:none; background:none; margin-bottom:1rem;">
+        <i class="fas fa-bars"></i> Menu
+    </button>
+    
+    <br>
+
+    <a href="user_dashboard.php" class="back-link">← Back to Dashboard</a>
 
     <div class="property-header">
-        <h1 class="property-title"><?= htmlspecialchars($property['type'] ?? 'Property') ?></h1>
+        <div>
+            <h1 class="property-title"><?= htmlspecialchars($property['property_name'] ?? 'Property') ?></h1>
+            <div style="color:var(--gray); margin-top:0.5rem; font-size:1.1rem;">
+                <?= htmlspecialchars($property['property_type']) ?> • <?= htmlspecialchars($property['location_city']) ?>
+            </div>
+        </div>
         <div class="price-tag">₹ <?= number_format($property['price'] ?? 0, 2) ?></div>
     </div>
 
     <!-- Gallery -->
     <div class="gallery">
-        <?php
-        $images = array_filter([
-            $property['image1'],
-            $property['image2'],
-            $property['image3'],
-            $property['image4']
-        ], function($img) {
-            return !empty($img) && filter_var($img, FILTER_VALIDATE_URL);
-        });
-
-        foreach ($images as $img): ?>
-            <div class="gallery-item">
-                <img src="<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($property['type'] ?? 'Property') ?>" loading="lazy">
-            </div>
-        <?php endforeach; ?>
-
-        <?php if (!empty($property['video']) && filter_var($property['video'], FILTER_VALIDATE_URL)): ?>
-            <div class="gallery-item">
-                <video controls>
-                    <source src="<?= htmlspecialchars($property['video']) ?>" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-        <?php endif; ?>
+        <?php for($i=1; $i<=5; $i++): ?>
+            <?php if(!empty($property["image$i"])): ?>
+                <div class="gallery-item">
+                    <img src="../../includes/view_image.php?id=<?= $prop_id ?>&num=<?= $i ?>" alt="Image <?= $i ?>">
+                </div>
+            <?php endif; ?>
+        <?php endfor; ?>
     </div>
 
     <!-- Details -->
@@ -216,38 +198,42 @@ if (!$property) {
         <h2>Property Details</h2>
 
         <div class="detail-row">
-            <div class="detail-label">Type:</div>
-            <div class="detail-value"><?= htmlspecialchars($property['type'] ?? '—') ?></div>
+            <div class="detail-label">Description</div>
+            <div class="detail-value"><?= nl2br(htmlspecialchars($property['description'] ?? 'No description.')) ?></div>
         </div>
 
         <div class="detail-row">
-            <div class="detail-label">Location:</div>
-            <div class="detail-value"><?= htmlspecialchars($property['location'] ?? '—') ?></div>
-        </div>
-
-        <div class="detail-row">
-            <div class="detail-label">Address:</div>
-            <div class="detail-value"><?= nl2br(htmlspecialchars($property['address'] ?? '—')) ?></div>
-        </div>
-
-        <div class="detail-row">
-            <div class="detail-label">Price:</div>
-            <div class="detail-value">₹ <?= number_format($property['price'] ?? 0, 2) ?></div>
-        </div>
-
-        <div class="detail-row">
-            <div class="detail-label">Commission:</div>
-            <div class="detail-value"><?= htmlspecialchars($property['commission'] ?? '—') ?>%</div>
-        </div>
-
-        <div class="detail-row">
-            <div class="detail-label">Status:</div>
+            <div class="detail-label">Status</div>
             <div class="detail-value">
-                <span class="status-badge status-<?= strtolower($property['status'] ?? 'unknown') ?>">
-                    <?= ucfirst($property['status'] ?? 'Unknown') ?>
+                <span class="status-badge status-<?= strtolower($property['status']) ?>">
+                    <?= ucfirst($property['status']) ?>
                 </span>
             </div>
         </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Full Location</div>
+            <div class="detail-value"><?= htmlspecialchars($property['full_location'] ?? '') ?></div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Location Area</div>
+            <div class="detail-value"><?= htmlspecialchars($property['location_area'] ?? '') ?></div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">City/State</div>
+            <div class="detail-value">
+                <?= htmlspecialchars($property['location_city'] ?? '') ?>, 
+                <?= htmlspecialchars($property['location_state'] ?? '') ?>
+            </div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Commission (Agent)</div>
+            <div class="detail-value"><?= htmlspecialchars($property['commission'] ?? 0) ?>%</div>
+        </div>
+
     </div>
 
 </div>
@@ -256,7 +242,6 @@ if (!$property) {
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('mobile-open');
     }
-
     document.getElementById('mobileMenuBtn')?.addEventListener('click', toggleSidebar);
 </script>
 

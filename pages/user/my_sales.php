@@ -2,26 +2,38 @@
 session_start();
 include '../../includes/db.php';
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'user') {
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['employee', 'driver'])) {
     header('Location: ../login.php');
     exit;
 }
 
 $user_id = $_SESSION['user_id'];
+$role    = $_SESSION['role'];
 
-// Get user info
-$user_stmt = $pdo->prepare("SELECT username FROM users WHERE id = ?");
-$user_stmt->execute([$user_id]);
-$user = $user_stmt->fetch();
+// Prepare query based on role
+// We join property_sales with properties
+if ($role === 'employee') {
+    $sql = "
+        SELECT p.property_id, p.property_type, p.location_city, p.full_location, 
+               p.price, p.commission, p.image1, s.sale_date, s.sale_price
+        FROM properties p
+        JOIN property_sales s ON p.property_id = s.property_id
+        WHERE s.emp_id = ?
+        ORDER BY s.sale_date DESC
+    ";
+} else {
+    // Driver
+    $sql = "
+        SELECT p.property_id, p.property_type, p.location_city, p.full_location, 
+               p.price, p.commission, p.image1, s.sale_date, s.sale_price
+        FROM properties p
+        JOIN property_sales s ON p.property_id = s.property_id
+        WHERE s.driver_id = ?
+        ORDER BY s.sale_date DESC
+    ";
+}
 
-// Fetch properties sold by this user
-$stmt = $pdo->prepare("
-    SELECT p.id, p.type, p.location, p.address, p.price, p.commission, p.image1, s.sale_date
-    FROM properties p
-    JOIN sales s ON p.id = s.property_id
-    WHERE s.user_id = ?
-    ORDER BY s.sale_date DESC
-");
+$stmt = $pdo->prepare($sql);
 $stmt->execute([$user_id]);
 $sold_properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -29,7 +41,9 @@ $sold_properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $total_sales = count($sold_properties);
 $total_commission = 0;
 foreach ($sold_properties as $prop) {
-    $total_commission += ($prop['price'] * $prop['commission'] / 100);
+    // Commission is calculated on the sale price (which usually matches property price but let's use sale_price from sales table if available, else property price)
+    $price = $prop['sale_price'] > 0 ? $prop['sale_price'] : $prop['price'];
+    $total_commission += ($price * $prop['commission'] / 100);
 }
 ?>
 
@@ -49,18 +63,14 @@ foreach ($sold_properties as $prop) {
             --dark: #2c3e50;
             --success: #28a745;
             --sidebar-width: 250px;
-            /* --navbar-height: 70px; */
         }
 
-        body {                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
- background: var(--light); margin: 0; color: var(--dark); }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--light); margin: 0; color: var(--dark); }
         .sidebar { width: var(--sidebar-width); background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%); color: white; height: 100vh; position: fixed; left: 0; top: 0; z-index: 1000; transition: transform 0.3s ease; }
-        /* .navbar { position: fixed; top: 0; left: var(--sidebar-width); right: 0; height: var(--navbar-height); background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); z-index: 999; display: flex; align-items: center; padding: 0 20px; } */
         .mobile-menu-btn { display: none; font-size: 1.8rem; cursor: pointer; color: var(--dark); }
 
         .main-content {
             margin-left: var(--sidebar-width);
-            /* margin-top: var(--navbar-height); */
             padding: 2rem 1.5rem;
             transition: margin-left 0.3s ease;
         }
@@ -82,12 +92,7 @@ foreach ($sold_properties as $prop) {
             text-align: center;
         }
 
-        .summary-value {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
+        .summary-value { font-size: 2.2rem; font-weight: 700; color: var(--primary); }
         .summary-label { color: var(--gray); font-size: 1rem; margin-top: 0.5rem; }
 
         table {
@@ -99,14 +104,8 @@ foreach ($sold_properties as $prop) {
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         }
 
-        th, td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #eee; }
         th { background: var(--primary); color: white; font-weight: 600; }
-
         tr:hover { background: #f8f9fa; }
 
         .property-image {
@@ -114,19 +113,11 @@ foreach ($sold_properties as $prop) {
             height: 60px;
             object-fit: cover;
             border-radius: 8px;
+            background: #eee;
         }
 
-        .no-sales {
-            text-align: center;
-            padding: 4rem 2rem;
-            color: var(--gray);
-        }
-
-        .no-sales i {
-            font-size: 4rem;
-            color: #ddd;
-            margin-bottom: 1rem;
-        }
+        .no-sales { text-align: center; padding: 4rem 2rem; color: var(--gray); }
+        .no-sales i { font-size: 4rem; color: #ddd; margin-bottom: 1rem; }
 
         .btn-view {
             background: var(--primary);
@@ -139,11 +130,7 @@ foreach ($sold_properties as $prop) {
         }
 
         .btn-view:hover { background: var(--primary-dark); }
-
-        .commission-earned {
-            color: var(--success);
-            font-weight: 600;
-        }
+        .commission-earned { color: var(--success); font-weight: 600; }
 
         @media (max-width: 992px) {
             .main-content { margin-left: 0; }
@@ -151,41 +138,22 @@ foreach ($sold_properties as $prop) {
             .sidebar.mobile-open { transform: translateX(0); }
             .mobile-menu-btn { display: block; }
         }
-
-        @media (max-width: 768px) {
-            table, thead, tbody, th, td, tr { display: block; }
-            thead tr { position: absolute; top: -9999px; left: -9999px; }
-            tr { margin-bottom: 1.5rem; border: 1px solid #ddd; border-radius: 12px; padding: 1rem; }
-            td { border: none; position: relative; padding-left: 50%; }
-            td:before {
-                position: absolute;
-                left: 1rem;
-                width: 45%;
-                padding-right: 1rem;
-                white-space: nowrap;
-                font-weight: 600;
-                color: var(--gray);
-            }
-            td:nth-of-type(1):before { content: "Property"; }
-            td:nth-of-type(2):before { content: "Price"; }
-            td:nth-of-type(3):before { content: "Commission"; }
-            td:nth-of-type(4):before { content: "Earned"; }
-            td:nth-of-type(5):before { content: "Sold Date"; }
-            td:nth-of-type(6):before { content: "Action"; }
-        }
     </style>
 </head>
 <body>
 
-<!-- Sidebar -->
 <nav class="sidebar" id="sidebar">
     <?php include '../../includes/sidebaruser.php'; ?>
 </nav>
 
 <div class="main-content">
+    
+    <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()" style="border:none; background:none; margin-bottom:1rem;">
+        <i class="fas fa-bars"></i> Menu
+    </button>
 
     <h1>My Sales</h1>
-    <!-- Summary Cards -->
+    
     <div class="summary-cards">
         <div class="summary-card">
             <div class="summary-value"><?= $total_sales ?></div>
@@ -201,48 +169,57 @@ foreach ($sold_properties as $prop) {
         <div class="no-sales">
             <i class="fas fa-handshake"></i>
             <h2>No Sales Yet</h2>
-            <p>Start exploring available properties and make your first sale!</p>
-            <a href="available_properties.php" style="background:var(--primary); color:white; padding:0.8rem 1.5rem; border-radius:8px; text-decoration:none; margin-top:1rem; display:inline-block;">
+            <p>Start exploring available properties and mark items as sold to track them here!</p>
+            <a href="availableProperty.php" style="background:var(--primary); color:white; padding:0.8rem 1.5rem; border-radius:8px; text-decoration:none; margin-top:1rem; display:inline-block;">
                 Browse Available Properties
             </a>
         </div>
     <?php else: ?>
-        <table>
-            <thead>
-                <tr>
-                    <th>Property</th>
-                    <th>Price</th>
-                    <th>Commission</th>
-                    <th>Earned</th>
-                    <th>Sold Date</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($sold_properties as $prop): 
-                    $earned = ($prop['price'] * $prop['commission'] / 100);
-                ?>
+        <div style="overflow-x:auto;">
+            <table>
+                <thead>
                     <tr>
-                        <td>
-                            <?php if (!empty($prop['image1'])): ?>
-                                <img src="<?= htmlspecialchars($prop['image1']) ?>" alt="Property" class="property-image">
-                            <?php endif; ?>
-                            <strong><?= htmlspecialchars($prop['type']) ?></strong><br>
-                            <small style="color:var(--gray);"><?= htmlspecialchars($prop['location']) ?></small>
-                        </td>
-                        <td>₹ <?= number_format($prop['price'], 2) ?></td>
-                        <td><?= $prop['commission'] ?>%</td>
-                        <td class="commission-earned">₹ <?= number_format($earned, 2) ?></td>
-                        <td><?= date('d M Y', strtotime($prop['sale_date'])) ?></td>
-                        <td>
-                            <a href="viewProperty.php?id=<?= $prop['id'] ?>" class="btn-view">
-                                View Details
-                            </a>
-                        </td>
+                        <th>Property</th>
+                        <th>Price</th>
+                        <th>Commission</th>
+                        <th>Earned</th>
+                        <th>Sold Date</th>
+                        <th>Action</th>
                     </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php foreach ($sold_properties as $prop): 
+                        $price = $prop['sale_price'] > 0 ? $prop['sale_price'] : $prop['price'];
+                        $earned = ($price * $prop['commission'] / 100);
+                    ?>
+                        <tr>
+                            <td>
+                                <div style="display:flex; gap:10px; align-items:center;">
+                                    <?php if (!empty($prop['image1'])): ?>
+                                        <img src="../../includes/view_image.php?id=<?= $prop['property_id'] ?>&num=1" class="property-image">
+                                    <?php else: ?>
+                                        <div class="property-image" style="display:flex; align-items:center; justify-content:center;"><i class="fas fa-home"></i></div>
+                                    <?php endif; ?>
+                                    <div>
+                                        <strong><?= htmlspecialchars($prop['property_type']) ?></strong><br>
+                                        <small style="color:var(--gray);"><?= htmlspecialchars($prop['location_city']) ?></small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>₹ <?= number_format($price, 2) ?></td>
+                            <td><?= $prop['commission'] ?>%</td>
+                            <td class="commission-earned">₹ <?= number_format($earned, 2) ?></td>
+                            <td><?= date('d M Y', strtotime($prop['sale_date'])) ?></td>
+                            <td>
+                                <a href="viewProperty.php?id=<?= $prop['property_id'] ?>" class="btn-view">
+                                    View
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     <?php endif; ?>
 
 </div>
@@ -251,7 +228,6 @@ foreach ($sold_properties as $prop) {
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('mobile-open');
     }
-
     document.getElementById('mobileMenuBtn')?.addEventListener('click', toggleSidebar);
 </script>
 

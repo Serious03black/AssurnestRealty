@@ -11,70 +11,61 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $type       = trim($_POST['type'] ?? '');
-    $location   = trim($_POST['location'] ?? '');
-    $address    = trim($_POST['address'] ?? '');
-    $price      = floatval($_POST['price'] ?? 0);
-    $commission = floatval($_POST['commission'] ?? 0);
-    $status     = $_POST['status'] ?? 'available';
+    $property_type   = trim($_POST['property_type'] ?? '');
+    $property_name   = trim($_POST['property_name'] ?? '');
+    $location_state  = trim($_POST['location_state'] ?? '');
+    $location_city   = trim($_POST['location_city'] ?? '');
+    $location_area   = trim($_POST['location_area'] ?? '');
+    $full_location   = trim($_POST['full_location'] ?? '');
+    $price           = floatval($_POST['price'] ?? 0);
+    $commission      = floatval($_POST['commission'] ?? 0);
+    $status          = $_POST['status'] ?? 'available';
+    $description     = trim($_POST['description'] ?? '');
+    
+    // New fields
+    $sqft            = floatval($_POST['sqft'] ?? 0);
+    $kitchens        = intval($_POST['kitchens'] ?? 0);
+    $rooms           = intval($_POST['rooms'] ?? 0);
+    $bathrooms       = intval($_POST['bathrooms'] ?? 0);
 
-    if (empty($type) || empty($location) || empty($address) || $price <= 0) {
+    if (empty($property_type) || empty($property_name) || empty($full_location) || $price <= 0) {
         $message = "Please fill all required fields correctly.";
         $success = false;
     } else {
         try {
-            $stmt = $pdo->prepare("
-                INSERT INTO properties (type, location, address, price, commission, status)
-                VALUES (?, ?, ?, ?, ?, ?)
-            ");
-            $stmt->execute([$type, $location, $address, $price, $commission, $status]);
-            $prop_id = $pdo->lastInsertId();
-
-            $image_urls = [null, null, null, null];
-            $video_url  = null;
-
-            for ($i = 1; $i <= 4; $i++) {
+            // Prepare image data
+            $image_data = [null, null, null, null, null];
+            
+            for ($i = 1; $i <= 5; $i++) {
                 $key = "image{$i}";
                 if (!empty($_FILES[$key]['tmp_name']) && $_FILES[$key]['error'] === UPLOAD_ERR_OK) {
-                    $upload = cloudinary()->uploadApi()->upload(
-                        $_FILES[$key]['tmp_name'],
-                        [
-                            'folder'        => 'assurnest/properties',
-                            'resource_type' => 'image',
-                            'public_id'     => "prop_{$prop_id}_img{$i}",
-                            'overwrite'     => true
-                        ]
-                    );
-                    $image_urls[$i-1] = $upload['secure_url'];
+                    $image_data[$i-1] = file_get_contents($_FILES[$key]['tmp_name']);
                 }
             }
 
-            if (!empty($_FILES['video']['tmp_name']) && $_FILES['video']['error'] === UPLOAD_ERR_OK) {
-                $upload = cloudinary()->uploadApi()->upload(
-                    $_FILES['video']['tmp_name'],
-                    [
-                        'folder'        => 'assurnest/properties',
-                        'resource_type' => 'video',
-                        'public_id'     => "prop_{$prop_id}_video",
-                        'overwrite'     => true
-                    ]
-                );
-                $video_url = $upload['secure_url'];
-            }
-
-            $update = $pdo->prepare("
-                UPDATE properties 
-                SET image1 = ?, image2 = ?, image3 = ?, image4 = ?, video = ?
-                WHERE id = ?
+            // Insert property with BLOBs
+            $stmt = $pdo->prepare("
+                INSERT INTO properties (
+                    property_type, property_name, location_state, location_city, location_area, 
+                    full_location, price, commission, description, status, admin_id,
+                    sqft, kitchens, rooms, bathrooms,
+                    image1, image2, image3, image4, image5
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
-            $update->execute([
-                $image_urls[0], $image_urls[1], $image_urls[2], $image_urls[3],
-                $video_url, $prop_id
+            
+            $stmt->execute([
+                $property_type, $property_name, $location_state, $location_city, $location_area,
+                $full_location, $price, $commission, $description, $status, $_SESSION['user_id'],
+                $sqft, $kitchens, $rooms, $bathrooms,
+                $image_data[0], $image_data[1], $image_data[2], $image_data[3], $image_data[4]
             ]);
+            
+            $prop_id = $pdo->lastInsertId();
 
             $message = "Property added successfully! (ID: $prop_id)";
             $success = true;
-        } catch (Exception $e) {
+
+        } catch (PDOException $e) {
             $message = "Error: " . $e->getMessage();
             $success = false;
         }
@@ -127,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .form-container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
             background: var(--card-bg);
             border-radius: 16px;
@@ -163,6 +154,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             gap: 1.8rem;
         }
 
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
         .form-group {
             margin-bottom: 1.4rem;
         }
@@ -177,6 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .form-control,
         textarea.form-control,
+        select.form-control,
         input[type="file"] {
             width: 100%;
             padding: 1rem 1.3rem;
@@ -189,7 +185,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .form-control:focus,
-        textarea.form-control:focus {
+        textarea.form-control:focus,
+        select.form-control:focus {
             outline: none;
             border-color: var(--rich-green);
             box-shadow: 0 0 0 4px rgba(15,107,58,0.25);
@@ -242,6 +239,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             gap: 0.8rem;
             transition: all 0.3s ease;
             border: 2px solid var(--gold);
+            width: 100%;
+            justify-content: center;
+            font-weight: 600;
         }
 
         .file-btn:hover {
@@ -263,7 +263,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 1.1rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            border: none;
+            border: 2px solid var(--gold);
             display: inline-flex;
             align-items: center;
             gap: 0.9rem;
@@ -272,24 +272,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .btn-primary {
             background: var(--rich-green);
             color: white;
-            border: 2px solid var(--gold);
-            box-shadow: 0 4px 15px rgba(15,107,58,0.3);
         }
 
         .btn-primary:hover {
             background: var(--rich-green-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(15,107,58,0.4);
         }
 
         .btn-secondary {
-            background: transparent;
+            background: #1e293b;
             color: var(--text-main);
-            border: 2px solid var(--gold);
         }
 
         .btn-secondary:hover {
-            background: rgba(255,255,255,0.08);
+            background: #253549;
         }
 
         .message {
@@ -351,17 +346,81 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form method="POST" id="propertyForm" enctype="multipart/form-data">
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label" for="type">
+                        <label class="form-label" for="property_type">
                             <i class="fas fa-tag"></i> Property Type
                         </label>
-                        <input type="text" class="form-control" id="type" name="type" required placeholder="e.g., Villa, Apartment, Condo">
+                        <input type="text" class="form-control" id="property_type" name="property_type" required placeholder="e.g., Villa, Apartment, Flat, Plot">
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="location">
-                            <i class="fas fa-map-marker-alt"></i> Location
+                        <label class="form-label" for="property_name">
+                            <i class="fas fa-home"></i> Property Name / Title
                         </label>
-                        <input type="text" class="form-control" id="location" name="location" required placeholder="e.g., Bandra, Powai, Andheri">
+                        <input type="text" class="form-control" id="property_name" name="property_name" required placeholder="e.g., Sunshine Villa, Ocean View Apartment">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="location_state">
+                            <i class="fas fa-map"></i> State
+                        </label>
+                        <input type="text" class="form-control" id="location_state" name="location_state" required placeholder="e.g., Maharashtra">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="location_city">
+                            <i class="fas fa-city"></i> City
+                        </label>
+                        <input type="text" class="form-control" id="location_city" name="location_city" required placeholder="e.g., Mumbai, Nashik">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="location_area">
+                            <i class="fas fa-map-marker-alt"></i> Area / Locality
+                        </label>
+                        <input type="text" class="form-control" id="location_area" name="location_area" required placeholder="e.g., Bandra West, College Road">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label" for="full_location">
+                            <i class="fas fa-address-card"></i> Full Location / Address
+                        </label>
+                        <textarea class="form-control" id="full_location" name="full_location" required placeholder="Complete address including landmark, pincode..."></textarea>
+                    </div>
+
+                    <div class="form-group full-width">
+                         <label class="form-label" for="description">
+                            <i class="fas fa-align-left"></i> Description
+                        </label>
+                        <textarea class="form-control" id="description" name="description" placeholder="Enter property description..."></textarea>
+                    </div>
+
+                    <!-- New Fields -->
+                    <div class="form-group">
+                        <label class="form-label" for="sqft">
+                            <i class="fas fa-ruler-combined"></i> Square Footage (Sqft)
+                        </label>
+                        <input type="number" class="form-control" id="sqft" name="sqft" step="0.01" placeholder="e.g. 1200">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="kitchens">
+                            <i class="fas fa-utensils"></i> Kitchens
+                        </label>
+                        <input type="number" class="form-control" id="kitchens" name="kitchens" placeholder="e.g. 1">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="rooms">
+                            <i class="fas fa-door-open"></i> Rooms
+                        </label>
+                        <input type="number" class="form-control" id="rooms" name="rooms" placeholder="e.g. 3">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="bathrooms">
+                            <i class="fas fa-bath"></i> Bathrooms
+                        </label>
+                        <input type="number" class="form-control" id="bathrooms" name="bathrooms" placeholder="e.g. 2">
                     </div>
 
                     <div class="form-group">
@@ -380,14 +439,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="commission-display" id="commissionDisplay">0% (₹ 0.00)</div>
                     </div>
 
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label class="form-label" for="address">
-                            <i class="fas fa-address-card"></i> Full Address
-                        </label>
-                        <textarea class="form-control" id="address" name="address" required placeholder="Enter complete property address..."></textarea>
-                    </div>
-
-                    <div class="form-group" style="grid-column: span 2;">
+                    <div class="form-group full-width">
                         <label class="form-label">
                             <i class="fas fa-signal"></i> Property Status
                         </label>
@@ -400,15 +452,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <input type="radio" name="status" value="sold" class="hidden-radio">
                                 Sold
                             </label>
-                            <label class="status-badge maintenance">
-                                <input type="radio" name="status" value="maintenance" class="hidden-radio">
+                            <label class="status-badge maintainence">
+                                <input type="radio" name="status" value="maintainence" class="hidden-radio">
                                 Maintenance
                             </label>
                         </div>
                     </div>
 
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label class="form-label"><i class="fas fa-images"></i> Property Images (up to 4)</label>
+                    <div class="form-group full-width">
+                        <label class="form-label"><i class="fas fa-images"></i> Property Images (up to 5)</label>
                         <div class="file-input-wrapper">
                             <div class="file-btn"><i class="fas fa-upload"></i> Main Image (Cover)</div>
                             <input type="file" name="image1" accept="image/*">
@@ -424,16 +476,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="file-input-wrapper">
                             <div class="file-btn"><i class="fas fa-upload"></i> Image 4</div>
                             <input type="file" name="image4" accept="image/*">
+                        </div><br>
+                        <div class="file-input-wrapper">
+                            <div class="file-btn"><i class="fas fa-upload"></i> Image 5</div>
+                            <input type="file" name="image5" accept="image/*">
                         </div>
                     </div>
 
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label class="form-label"><i class="fas fa-video"></i> Property Video (optional)</label>
-                        <div class="file-input-wrapper">
-                            <div class="file-btn"><i class="fas fa-upload"></i> Upload Video</div>
-                            <input type="file" name="video" accept="video/*">
-                        </div>
-                    </div>
                 </div>
 
                 <div class="form-actions">

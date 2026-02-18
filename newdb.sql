@@ -1,4 +1,3 @@
--- Real-Estate Sales Management System
 CREATE DATABASE property_sales_system;
 USE property_sales_system;
 
@@ -10,6 +9,10 @@ CREATE TABLE admins (
     user VARCHAR(50),
     password VARCHAR(255)
 );
+
+-- Insert default admin (password: 123456)
+INSERT INTO admins (admin_name, user, password) VALUES 
+('System Admin', 'admin', '$2y$10$W5l0FWLNrFuERUHJMAi7NeyXGMpTSzMFa3PHf44AWVcTflM5KUity');
 
 --  EMPLOYEES 
 CREATE TABLE employees (
@@ -59,11 +62,11 @@ CREATE TABLE properties (
     full_location TEXT,
     price DECIMAL(12,2),
     commission DECIMAL(10,2),
-    image1 VARCHAR(255),
-    image2 VARCHAR(255),
-    image3 VARCHAR(255),
-    image4 VARCHAR(255),
-    image5 VARCHAR(255),
+    image1 LONGBLOB,
+    image2 LONGBLOB,
+    image3 LONGBLOB,
+    image4 LONGBLOB,
+    image5 LONGBLOB,
     status ENUM('available','sold','maintainence') DEFAULT 'available',
     FOREIGN KEY (admin_id) REFERENCES admins(admin_id)
 );

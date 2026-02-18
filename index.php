@@ -1044,36 +1044,33 @@
                 require_once 'includes/db.php';
                 
                 // Fetch properties from database using PDO
-                $query = "SELECT * FROM properties ORDER BY created_at DESC LIMIT 3";
+                $query = "SELECT * FROM properties ORDER BY property_id DESC LIMIT 3";
                 $stmt = $pdo->query($query);
                 $properties = $stmt->fetchAll();
                 
                 if (count($properties) > 0) {
                     foreach ($properties as $property) {
             ?>
+            ?>
             <div class="property-card fade-in">
-                <img src="<?php echo htmlspecialchars($property['image_url']); ?>" alt="<?php echo htmlspecialchars($property['title']); ?>" class="property-img">
+                <img src="includes/view_image.php?id=<?php echo $property['property_id']; ?>&num=1" alt="<?php echo htmlspecialchars($property['property_name']); ?>" class="property-img">
                 <div class="property-info">
-                    <h3 class="property-title"><?php echo htmlspecialchars($property['title']); ?></h3>
+                    <h3 class="property-title"><?php echo htmlspecialchars($property['property_name']); ?></h3>
                     <div class="property-location">
                         <i class="fas fa-map-marker-alt"></i>
-                        <span><?php echo htmlspecialchars($property['location']); ?></span>
+                        <span><?php echo htmlspecialchars($property['location_city'] . ', ' . $property['location_state']); ?></span>
                     </div>
-                    <div class="property-price">$<?php echo number_format($property['price']); ?></div>
-                    <p class="property-description"><?php echo htmlspecialchars($property['description']); ?></p>
+                    <div class="property-price">₹<?php echo number_format($property['price']); ?></div>
+                    <p class="property-description"><?php echo htmlspecialchars(substr($property['description'], 0, 100)) . '...'; ?></p>
                     <div class="property-features">
-                        <div class="feature">
-                            <i class="fas fa-bed"></i>
-                            <div><?php echo $property['bedrooms']; ?> Beds</div>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-bath"></i>
-                            <div><?php echo $property['bathrooms']; ?> Baths</div>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-ruler-combined"></i>
-                            <div><?php echo number_format($property['square_feet']); ?> sqft</div>
-                        </div>
+                       <div class="feature">
+                            <i class="fas fa-tag"></i>
+                            <div><?php echo htmlspecialchars($property['property_type']); ?></div>
+                       </div>
+                       <div class="feature">
+                            <i class="fas fa-map"></i>
+                            <div><?php echo htmlspecialchars($property['location_area']); ?></div>
+                       </div>
                     </div>
                 </div>
             </div>

@@ -2,17 +2,19 @@
 session_start();
 include '../../includes/db.php';
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'user') {
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['employee', 'driver'])) {
     header('Location: ../login.php');
     exit;
 }
 
 // Fetch only AVAILABLE properties
 $stmt = $pdo->prepare("
-    SELECT id, type, location, address, price, commission, image1, status 
+    SELECT property_id, property_type, property_name, 
+           location_city, location_area, full_location, 
+           price, commission, image1, status 
     FROM properties 
     WHERE status = 'available' 
-    ORDER BY id DESC
+    ORDER BY property_id DESC
 ");
 $stmt->execute();
 $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -33,23 +35,20 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
             --gray: #6c757d;
             --dark: #2c3e50;
             --sidebar-width: 250px;
-            /* --navbar-height: 70px; */
         }
 
         body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--light);
             margin: 0;
             color: var(--dark);
         }
 
         .sidebar { width: var(--sidebar-width); background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%); color: white; height: 100vh; position: fixed; left: 0; top: 0; z-index: 1000; transition: transform 0.3s ease; }
-        /* .navbar { position: fixed; top: 0; left: var(--sidebar-width); right: 0; height: var(--navbar-height); background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.1); z-index: 999; display: flex; align-items: center; padding: 0 20px; } */
         .mobile-menu-btn { display: none; font-size: 1.8rem; cursor: pointer; color: var(--dark); }
 
         .main-content {
             margin-left: var(--sidebar-width);
-            /* margin-top: var(--navbar-height); */
             padding: 2rem 1.5rem;
             transition: margin-left 0.3s ease;
         }
@@ -89,6 +88,7 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
             height: 220px;
             background: #f0f4f8;
             overflow: hidden;
+            position: relative;
         }
 
         .card-image img {
@@ -123,6 +123,7 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
             font-size: 1.4rem;
             font-weight: 700;
             margin: 0 0 0.6rem 0;
+            color: var(--primary);
         }
 
         .property-price {
@@ -142,8 +143,14 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         .commission-info {
             font-size: 0.95rem;
-            color: var(--primary);
+            color: var(--dark);
+            font-weight: 600;
             margin-bottom: 1rem;
+            padding: 0.5rem;
+            background: #e8f5e9;
+            border-radius: 6px;
+            text-align: center;
+            color: #2e7d32;
         }
 
         .view-btn {
@@ -195,14 +202,14 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php include '../../includes/sidebaruser.php'; ?>
 </nav>
 
-<!-- Navbar -->
-<!-- <nav class="navbar">
-    <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
-</nav> -->
 
 <div class="main-content">
+    
+    <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()" style="border:none; background:none; margin-bottom:1rem;">
+        <i class="fas fa-bars"></i> Menu
+    </button>
+    
+    <br>
 
     <h1>Available Properties</h1>
 
@@ -215,10 +222,10 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <?php else: ?>
         <div class="properties-grid">
             <?php foreach ($properties as $prop): ?>
-                <a href="viewProperty.php?id=<?= $prop['id'] ?>" class="property-card">
+                <a href="viewProperty.php?id=<?= $prop['property_id'] ?>" class="property-card">
                     <div class="card-image">
-                        <?php if (!empty($prop['image1']) && filter_var($prop['image1'], FILTER_VALIDATE_URL)): ?>
-                            <img src="<?= htmlspecialchars($prop['image1']) ?>" alt="<?= htmlspecialchars($prop['type'] ?? 'Property') ?>" loading="lazy">
+                        <?php if (!empty($prop['image1'])): ?>
+                            <img src="../../includes/view_image.php?id=<?= $prop['property_id'] ?>&num=1" alt="<?= htmlspecialchars($prop['property_type']) ?>" loading="lazy">
                         <?php else: ?>
                             <div class="card-image-placeholder">
                                 <i class="fas fa-building"></i>
@@ -227,19 +234,18 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
 
                     <div class="card-body">
-                        <h2 class="property-type">
-                            <?= htmlspecialchars($prop['type'] ?? 'Property') ?>
-                        </h2>
+                        <div class="property-type">
+                            <?= htmlspecialchars($prop['property_type'] ?? 'Property') ?>
+                        </div>
 
                         <div class="property-price">
                             ₹ <?= number_format($prop['price'] ?? 0, 2) ?>
                         </div>
 
                         <div class="property-location">
-                            <?= htmlspecialchars(trim(implode(', ', array_filter([
-                                $prop['location'] ?? '',
-                                $prop['address'] ?? ''
-                            ])))) ?: 'Location not specified' ?>
+                            <i class="fas fa-map-marker-alt"></i> 
+                            <?= htmlspecialchars($prop['location_city'] ?? '') ?>, 
+                            <?= htmlspecialchars($prop['location_area'] ?? '') ?>
                         </div>
 
                         <div class="commission-info">
@@ -261,7 +267,6 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('mobile-open');
     }
-
     document.getElementById('mobileMenuBtn')?.addEventListener('click', toggleSidebar);
 </script>
 

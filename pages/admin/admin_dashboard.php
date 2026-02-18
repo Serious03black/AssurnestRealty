@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 }
 
 // Safe defaults
-$admin = ['username' => 'Admin'];
+$admin = ['admin_name' => 'Admin'];
 $stats = [
     'total_properties'      => 0,
     'sold_properties'       => 0,
@@ -32,17 +32,17 @@ try {
 }
 
 // Handle approval (employees & cab drivers)
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['approve'])) {
-    $id     = (int)$_GET['approve'];
-    $type   = $_GET['type'] ?? '';
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['approve']) && isset($_GET['type'])) {
+    $id   = (int)$_GET['approve'];
+    $type = $_GET['type'];
 
     if ($type === 'employee') {
-        $pdo->prepare("UPDATE employees SET status = 'active' WHERE emp_id = ?")
+        $pdo->prepare("UPDATE employees SET status = 'approved' WHERE emp_id = ?")
             ->execute([$id]);
         header("Location: admin_dashboard.php?approved=employee");
         exit;
     } elseif ($type === 'driver') {
-        $pdo->prepare("UPDATE cab_drivers SET status = 'active' WHERE driver_id = ?")
+        $pdo->prepare("UPDATE cab_drivers SET status = 'approved' WHERE driver_id = ?")
             ->execute([$id]);
         header("Location: admin_dashboard.php?approved=driver");
         exit;
@@ -78,20 +78,20 @@ try {
     $stats['total_drivers'] = $stmt->fetchColumn() ?: 0;
 
     // Pending approvals
-    $stmt = $pdo->query("SELECT COUNT(*) FROM employees WHERE status != 'active'");
+    $stmt = $pdo->query("SELECT COUNT(*) FROM employees WHERE status = 'pending'");
     $stats['pending_employees'] = $stmt->fetchColumn() ?: 0;
 
-    $stmt = $pdo->query("SELECT COUNT(*) FROM cab_drivers WHERE status != 'active'");
+    $stmt = $pdo->query("SELECT COUNT(*) FROM cab_drivers WHERE status = 'pending'");
     $stats['pending_drivers'] = $stmt->fetchColumn() ?: 0;
 
     // Pending employees list
     $stmt = $pdo->query("SELECT emp_id, emp_name, mobile_no, email, enrollment_date 
-                         FROM employees WHERE status != 'active' ORDER BY enrollment_date DESC LIMIT 5");
+                         FROM employees WHERE status = 'pending' ORDER BY enrollment_date DESC LIMIT 5");
     $pending_employees = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
     // Pending cab drivers list
     $stmt = $pdo->query("SELECT driver_id, driver_name, mobile_no, email, enrollment_date 
-                         FROM cab_drivers WHERE status != 'active' ORDER BY enrollment_date DESC LIMIT 5");
+                         FROM cab_drivers WHERE status = 'pending' ORDER BY enrollment_date DESC LIMIT 5");
     $pending_drivers = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 
     // Top 3 earners (combined commission + referral)
@@ -140,6 +140,8 @@ try {
             --gold-dark: #b8860b;
             --border: #2d3748;
             --shadow: 0 6px 20px rgba(0,0,0,0.4);
+            --sidebar-width: 260px;
+            --navbar-height: 75px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -151,18 +153,48 @@ try {
             min-height: 100vh;
         }
 
-        .sidebar { width: 260px; background: linear-gradient(180deg, var(--rich-green-dark), var(--rich-green)); color: white; height: 100vh; position: fixed; left: 0; top: 0; z-index: 1000; transition: transform 0.4s ease; box-shadow: 4px 0 25px rgba(0,0,0,0.5); }
-        .navbar { position: fixed; top: 0; left: 260px; right: 0; height: 75px; background: linear-gradient(90deg, var(--gold), var(--gold-dark)); color: var(--black); box-shadow: 0 4px 20px rgba(0,0,0,0.4); z-index: 999; display: flex; align-items: center; padding: 0 30px; font-weight: 600; transition: left 0.4s ease; }
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--rich-green-dark), var(--rich-green));
+            color: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            transition: transform 0.4s ease;
+            box-shadow: 4px 0 25px rgba(0,0,0,0.5);
+            overflow-y: auto;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: var(--navbar-height);
+            background: linear-gradient(90deg, var(--gold), var(--gold-dark));
+            color: var(--black);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            font-weight: 600;
+            transition: left 0.4s ease;
+        }
+
         .mobile-menu-btn { display: none; font-size: 1.9rem; cursor: pointer; color: var(--black); }
 
         .main-content {
-            margin-left: 260px;
-            margin-top: 75px;
+            margin-left: var(--sidebar-width);
+            margin-top: var(--navbar-height);
             padding: 2rem;
             transition: margin-left 0.4s ease;
+            min-height: calc(100vh - var(--navbar-height));
         }
 
-        .container { max-width: 1400px; margin: 0 auto; }
+        /* .container { max-width: 1400px; margin: 0 auto; } */
 
         .welcome {
             font-size: 1.9rem;
@@ -181,7 +213,7 @@ try {
         .stat-card {
             flex: 1;
             min-width: 180px;
-            background: var(--card-bg);
+            background: var(--bg-card);
             border: 1px solid var(--gold);
             border-radius: 12px;
             padding: 1.2rem 1.4rem;
@@ -219,7 +251,7 @@ try {
 
         .property-card, .earner-card {
             flex: 0 0 240px;
-            background: var(--card-bg);
+            background: var(--bg-card);
             border: 1px solid var(--gold);
             border-radius: 12px;
             overflow: hidden;
@@ -266,7 +298,7 @@ try {
         .pending-table {
             width: 100%;
             border-collapse: collapse;
-            background: var(--card-bg);
+            background: var(--bg-card);
             border-radius: 12px;
             overflow: hidden;
             border: 1px solid var(--gold);
@@ -314,6 +346,11 @@ try {
 </head>
 <body>
 
+<!-- Mobile toggle button -->
+<button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
+
 <!-- Sidebar -->
 <nav class="sidebar" id="sidebar">
     <?php include '../../includes/sidebaradmin.php'; ?>
@@ -321,9 +358,6 @@ try {
 
 <!-- Navbar -->
 <nav class="navbar">
-    <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
     <?php include '../../includes/navbar.php'; ?>
 </nav>
 
@@ -394,7 +428,7 @@ try {
                 <div class="property-card">
                     <div class="prop-image">
                         <?php if (!empty($p['image1'])): ?>
-                            <img src="<?= htmlspecialchars($p['image1']) ?>" alt="Property">
+                            <img src="../../includes/view_image.php?id=<?= $p['id'] ?>&num=1" alt="Property">
                         <?php else: ?>
                             <i class="fas fa-home" style="font-size:3rem;color:#4b5563;"></i>
                         <?php endif; ?>
@@ -491,7 +525,9 @@ try {
 function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('mobile-open');
 }
+
 document.getElementById('mobileMenuBtn')?.addEventListener('click', toggleSidebar);
 </script>
+
 </body>
 </html>
