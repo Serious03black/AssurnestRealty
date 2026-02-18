@@ -275,6 +275,12 @@ $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <?= htmlspecialchars($prop['location_area'] ?? '') ?>
                         </div>
 
+                        <?php if(!empty($prop['sqft'])): ?>
+                            <div style="font-size:0.9rem; color:var(--text-muted); margin-bottom:0.5rem;">
+                                <i class="fas fa-ruler-combined"></i> <?= number_format($prop['sqft']) ?> sq. ft.
+                            </div>
+                        <?php endif; ?>
+
                         <span class="status-badge status-<?= strtolower($prop['status'] ?? 'unknown') ?>">
                             <?= ucfirst($prop['status'] ?? 'Unknown') ?>
                         </span>

@@ -212,6 +212,22 @@ if (!$property) {
         </div>
 
         <div class="detail-row">
+            <div class="detail-label">Configuration</div>
+            <div class="detail-value">
+                <?= $property['rooms'] ? $property['rooms'] . ' Rooms' : 'N/A' ?> • 
+                <?= $property['kitchens'] ? $property['kitchens'] . ' Kitchens' : 'N/A' ?> • 
+                <?= $property['bathrooms'] ? $property['bathrooms'] . ' Bathrooms' : 'N/A' ?>
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Square Footage</div>
+            <div class="detail-value">
+                <?= $property['sqft'] ? number_format($property['sqft']) . ' sq. ft.' : 'N/A' ?>
+            </div>
+        </div>
+
+        <div class="detail-row">
             <div class="detail-label">Full Location</div>
             <div class="detail-value"><?= htmlspecialchars($property['full_location'] ?? '') ?></div>
         </div>
