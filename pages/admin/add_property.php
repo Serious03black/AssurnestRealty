@@ -349,7 +349,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label class="form-label" for="property_type">
                             <i class="fas fa-tag"></i> Property Type
                         </label>
-                        <input type="text" class="form-control" id="property_type" name="property_type" required placeholder="e.g., Villa, Apartment, Flat, Plot">
+                        <select class="form-control" id="property_type" name="property_type" required>
+                            <option value="" disabled selected>Select Property Type</option>
+                            <option value="Flat">Flat</option>
+                            <option value="Lands and Plots">Lands and Plots</option>
+                            <option value="Row House">Row House</option>
+                            <option value="Villa">Villa</option>
+                            <option value="Bungalow">Bungalow</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
