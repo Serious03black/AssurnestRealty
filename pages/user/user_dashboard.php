@@ -17,7 +17,7 @@ if ($role === 'employee') {
     $stmt->execute([$user_id]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 } else {
-    $stmt = $pdo->prepare("SELECT driver_name AS name, monthly_rank, total_properties_sold, commission, referral_bonus FROM cab_drivers WHERE driver_id = ?");
+    $stmt = $pdo->prepare("SELECT driver_name AS name, monthly_rank, total_properties_sold, commission, referral_bonus, referral_code FROM cab_drivers WHERE driver_id = ?");
     $stmt->execute([$user_id]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 }
@@ -32,7 +32,51 @@ $my_rank   = $user['monthly_rank'] ?? 'Not Ranked';
 $my_sales  = $user['total_properties_sold'] ?? 0;
 $my_comm   = $user['commission'] ?? 0.00;
 //$my_bonus  = $user['referral_bonus'] ?? 0.00; 
-// Total earnings can be commission + bonus if applicable, but for now showing commission based on previous code.
+
+// --- COMMISSION & PAYMENT LOGIC ---
+
+// 1. Calculate Total Earned
+$total_earned = 0;
+
+// A. From Property Sales
+if ($role === 'employee') {
+    $stmt_sales = $pdo->prepare("
+        SELECT p.price, p.commission, s.sale_price
+        FROM property_sales s
+        JOIN properties p ON s.property_id = p.property_id
+        WHERE s.emp_id = ?
+    ");
+} else {
+    $stmt_sales = $pdo->prepare("
+        SELECT p.price, p.commission, s.sale_price
+        FROM property_sales s
+        JOIN properties p ON s.property_id = p.property_id
+        WHERE s.driver_id = ?
+    ");
+}
+$stmt_sales->execute([$user_id]);
+$sales_data = $stmt_sales->fetchAll(PDO::FETCH_ASSOC);
+
+foreach ($sales_data as $sale) {
+    $price = $sale['sale_price'] > 0 ? $sale['sale_price'] : $sale['price'];
+    $earned = ($price * $sale['commission'] / 100);
+    $total_earned += $earned;
+}
+
+// B. From Referral Bonus (Drivers Only)
+if ($role === 'driver') {
+    $referral_bonus = $user['referral_bonus'] ?? 0;
+    $total_earned += $referral_bonus;
+}
+
+// 2. Calculate Total Received (from payments table)
+$stmt_payments = $pdo->prepare("SELECT SUM(amount) FROM payments WHERE user_id = ? AND role = ?");
+$stmt_payments->execute([$user_id, $role]);
+$total_received = $stmt_payments->fetchColumn() ?: 0;
+
+// 3. Calculate Pending
+$pending_payment = $total_earned - $total_received;
+
 
 // 2. Fetch Available Properties
 $stmt = $pdo->query("SELECT * FROM properties WHERE status = 'available' ORDER BY property_id DESC");
@@ -349,12 +393,50 @@ $leaderboard = $lb_stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="card-value"><?= $my_sales ?></div>
             <div class="card-label">My Sales</div>
         </div>
-        <div class="short-card">
-            <div class="card-icon"><i class="fas fa-dollar-sign"></i></div>
-            <div class="card-value">₹ <?= number_format($my_comm, 2) ?></div>
-            <div class="card-label">Total Earnings</div>
+            <!-- Commission Detailed Cards -->
+            <div class="short-card" style="background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%); color: white;">
+                <div class="card-icon" style="color:white;"><i class="fas fa-coins"></i></div>
+                <div class="card-value">₹ <?= number_format($total_earned, 2) ?></div>
+                <div class="card-label" style="color:white;">Total Earned</div>
+            </div>
+            
+            <div class="short-card" style="background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%); color: white;">
+                <div class="card-icon" style="color:white;"><i class="fas fa-wallet"></i></div>
+                <div class="card-value">₹ <?= number_format($total_received, 2) ?></div>
+                <div class="card-label" style="color:white;">Total Received</div>
+            </div>
+
+            <div class="short-card" style="background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%); color: white;">
+                <div class="card-icon" style="color:white;"><i class="fas fa-hourglass-half"></i></div>
+                <div class="card-value">₹ <?= number_format($pending_payment, 2) ?></div>
+                <div class="card-label" style="color:white;">Pending Payment</div>
+            </div>
         </div>
     </div>
+
+    <?php if ($role === 'driver'): ?>
+    <!-- Referral Code Banner -->
+    <div style="
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+    ">
+        <div>
+            <h3 style="margin:0 0 5px 0;">Refer & Earn 50% Bonus!</h3>
+            <p style="margin:0; opacity:0.9;">Share your unique code with other drivers. Earn 50% of their commission on every sale.</p>
+        </div>
+        <div style="background: rgba(255,255,255,0.2); padding: 0.8rem 1.5rem; border-radius: 8px; font-family: monospace; font-size: 1.5rem; letter-spacing: 2px; font-weight: bold; border: 2px dashed rgba(255,255,255,0.5);">
+            <?= htmlspecialchars($user['referral_code'] ?? 'N/A') ?>
+        </div>
+    </div>
+    <?php endif; ?>
 
     <!-- All Available Properties -->
     <h2 style="margin: 2rem 0 1rem; text-align:center;">Available Properties</h2>

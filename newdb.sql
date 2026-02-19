@@ -29,6 +29,24 @@ CREATE TABLE employees (
     enrollment_date DATE NOT NULL,
     status ENUM('approved','rejected','pending') DEFAULT 'pending'
 );
+-- update the employe tale for custom emp_id to be like emp121001, emp121002, emp121003, etc.
+ALTER TABLE employees 
+ADD COLUMN prefix VARCHAR(20) UNIQUE AFTER emp_id;
+ALTER TABLE employees AUTO_INCREMENT = 12101;
+DELIMITER $$
+CREATE TRIGGER before_insert_employees
+BEFORE INSERT ON employees
+FOR EACH ROW
+BEGIN
+   SET NEW.prefix = CONCAT(
+       'emp',
+       (SELECT AUTO_INCREMENT
+        FROM information_schema.TABLES
+        WHERE TABLE_SCHEMA = DATABASE()
+        AND TABLE_NAME = 'employees')
+   );
+END$$
+DELIMITER ;
 
 -- CABDRIVERS 
 CREATE TABLE cab_drivers (
@@ -47,7 +65,24 @@ CREATE TABLE cab_drivers (
     enrollment_date DATE NOT NULL,
     status ENUM('approved','rejected','pending') DEFAULT 'pending'
 );
-
+-- update the cab_drivers tale for custom driver_id to be like cab122001, cab122002, cab122003, etc.
+ALTER TABLE cab_drivers 
+ADD COLUMN prefix VARCHAR(20) UNIQUE AFTER driver_id;
+ALTER TABLE cab_drivers AUTO_INCREMENT = 122001;
+DELIMITER $$
+CREATE TRIGGER before_insert_cab_drivers
+BEFORE INSERT ON cab_drivers
+FOR EACH ROW
+BEGIN
+   SET NEW.prefix = CONCAT(
+       'cab',
+       (SELECT AUTO_INCREMENT
+        FROM information_schema.TABLES
+        WHERE TABLE_SCHEMA = DATABASE()
+        AND TABLE_NAME = 'cab_drivers')
+   );
+END$$
+DELIMITER ;
 
 -- PROPERTIES 
 CREATE TABLE properties (

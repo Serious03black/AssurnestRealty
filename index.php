@@ -1,1422 +1,1638 @@
-
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prime Properties | Luxury Real Estate</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --finance-blue: #4a90e2;
-            --real-estate-green: #2ecc71;
-            --logo-gold: #997C37;
-            --logo-black: #121212;
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #1a1a1a;
-            --bg-card: #222222;
-            --text-primary: #ffffff;
-            --text-secondary: #b0b0b0;
-            --border-color: #333333;
-            --shadow-color: rgba(0, 0, 0, 0.5);
-            --hover-gold: #ffd700;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        
-     
-        /* Header & Navigation */
-        header {
-            background-color: var(--bg-secondary);
-            box-shadow: 0 2px 15px var(--shadow-color);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
 
-            /* padding: 15px 0; */
-        }
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Rethouse - Real Estate HTML Template">
+    <meta name="keywords" content="Real Estate, Property, Directory Listing, Marketing, Agency" />
+    <meta name="author" content="mardianto - retenvi.com">
+    <title>ASSURNEST REALITY</title>
 
-        
-        .logo {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            text-decoration: none;
-        }
-        
-        .logo-icon {
-            color: var(--logo-gold);
-            font-size: 32px;
-            margin-right: 10px;
-        }
-        
-        .logo-text {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        
-        .logo-text span {
-            color: var(--logo-gold);
-        }
-        
-        .nav-links {
-            display: flex;
-            list-style: none;
-        }
-        
-        .nav-links li {
-            margin-left: 30px;
-        }
-        
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-secondary);
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-        
-        .nav-links a:hover {
-            color: var(--logo-gold);
-        }
-        
-     /* From Uiverse.io by joe-watson-sbf */ 
-.btn {
-  font-size: 17px;
-  background: transparent;
-  border: none;
-  padding: 0em 1em;
-  color: #ffedd3;
-  text-transform: uppercase;
-  position: relative;
-  transition: 0.5s ease;
-  cursor: pointer;
-}
+    <!-- Facebook and Twitter integration -->
+    <meta property="og:title" content="" />
+    <meta property="og:image" content="" />
+    <meta property="og:url" content="" />
+    <meta property="og:site_name" content="" />
+    <meta property="og:description" content="" />
+    <meta name="twitter:title" content="" />
+    <meta name="twitter:image" content="" />
+    <meta name="twitter:url" content="" />
+    <meta name="twitter:card" content="" />
 
-.btn::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 2px;
-  width: 0;
-  background-color: #997C37;
-  transition: 0.5s ease;
-}
+    <link rel="manifest" href="site.webmanifest">
+    <!-- favicon.ico in the root directory -->
+    <link rel="apple-touch-icon" href="icon.png">
+    <meta name="theme-color" content="#3454d1">
+    <link href="./css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/homepage_addtional.css">
+</head>
+   
+                                    
 
-.btn:hover {
-  color: #1e1e2b;
-  transition-delay: 0.5s;
-}
+<body>
+    <!-- HEADER -->
+    <header class="header__style-one">
+        <!-- NAVBAR -->
+        <nav class="navbar navbar-hover navbar-expand-lg navbar-soft navbar-transparent ">
+            <div class="container">
+                <a class="navbar-brand" href="/homepage-v1.html">
+                    <img src="images/logo-blue.png" alt="">
+                    <img src="images/logo-blue-stiky.png" alt="">
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main_nav99">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="main_nav99">
+                    <ul class="navbar-nav mx-auto ">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link active dropdown-toggle" href="#" data-toggle="dropdown"> Home </a>
+                            <ul class="dropdown-menu dropdown-menu-left animate fade-up">
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"> Properties </a>
+                            <ul class="dropdown-menu animate fade-up">
+                                <li><a class="dropdown-item " href="#">Luxury Flats</a>
+                                </li>
+                                <li><a class="dropdown-item " href="#">Villa</a>
+                            </li>
+                                <li><a class="dropdown-item " href="#"> Row Houses </a>
+                                                        </li>
+                                <li><a class="dropdown-item " href="#"> Lands and Plots </a>
+                                                                </li>
+                                <li><a class="dropdown-item " href="#">Bungloows</a>
+                                                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link active dropdown-toggle" href="#" data-toggle="dropdown"> Blog </a>
+                            <ul class="dropdown-menu dropdown-menu-left animate fade-up">
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="/contact.html"> contact </a></li>
+                    </ul>
+                    <!-- Search bar.// -->
+                    <ul class="navbar-nav ">
+                        <li>
+                            <a href="#" class="btn btn-primary text-capitalize">
+                                <i class="fa fa-sign-in mr-1"></i> Sign up</a>
+                        </li>
+                    </ul>
+                    <!-- Search content bar.// -->
+                    <div class="top-search navigation-shadow">
+                        <div class="container">
+                            <div class="input-group ">
+                                <form action="#">
 
-.btn:hover::before {
-  width: 100%;
-}
+                                    <div class="row no-gutters mt-3">
+                                        <div class="col">
+                                            <input class="form-control border-secondary border-right-0 rounded-0"
+                                                type="search" value="" placeholder="Search " id="example-search-input4">
+                                        </div>
+                                        <div class="col-auto">
+                                            <a class="btn btn-outline-secondary border-left-0 rounded-0 rounded-right"
+                                                href="/search-result.html">
+                                                <i class="fa fa-search"></i>
+                                            </a>
+                                        </div>
+                                    </div>
 
-.btn::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 0;
-  width: 100%;
-  background-color: #997C37;
-  transition: 0.4s ease;
-  z-index: -1;
-}
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Search content bar.// -->
+                </div> <!-- navbar-collapse.// -->
+            </div>
+        </nav>
+        <!-- END NAVBAR -->
+    </header>
+    <!-- END HEADER -->
+    <!-- CAROUSEL -->
 
-.btn:hover::after {
-  height: 100%;
-  transition-delay: 0.4s;
-  color: aliceblue;
-}
+    <!-- CAROUSEL -->
+    <div class="slider-container" >
+        <section class="hero fade-in" id="home">
+            <div class="container">
+                <h1 class="animate-on-enter">Find Your Dream Property</h1>
+                <p class="animate-on-enter" style="--delay: 0.35s;">
+                    Prime Properties offers luxury real estate with premium financial solutions.
+                    Discover exclusive properties and personalized financing options tailored to your needs.
+                </p>
+                <a href="#properties" class="btn-hero animate-on-enter" style="--delay: 0.65s;">
+                    Explore Properties
+                </a>
+            </div>
+            <style>
+    
 
- 
-  
-     
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.7)), url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80');
-            background-size: cover;
-            background-position: center;
-            text-align: center;
-            padding: 120px 20px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.8) 100%);
-            z-index: 1;
-        }
-        
-        .hero > .container {
-            position: relative;
-            z-index: 2;
-        }
-        
-        .hero h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-            color: var(--text-primary);
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-        }
-        
-        .hero p {
-            font-size: 20px;
-            max-width: 800px;
-            margin: 0 auto 30px;
-            color: var(--text-secondary);
-        }
-        
-        .btn-hero {
-            background-color: var(--logo-gold);
-            color: var(--logo-black);
-            padding: 15px 40px;
-            font-size: 18px;
-            border-radius: 30px;
-            font-weight: 700;
-        }
-        
-        /* Properties Section */
-        .section-title {
-            text-align: center;
-            margin: 60px 0 40px;
-            font-size: 36px;
-            color: var(--text-primary);
-        }
-        
-        .section-title span {
-            color: var(--logo-gold);
-        }
-        
-        .properties-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 30px;
-            margin-bottom: 60px;
-        }
-        
-        .property-card {
-            background-color: var(--bg-card);
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px var(--shadow-color);
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: 1px solid var(--border-color);
-        }
-        
-        .property-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(241, 196, 15, 0.1);
-            border-color: var(--logo-gold);
-        }
-        
-        .property-img {
-            height: 240px;
-            width: 100%;
-            object-fit: cover;
-            transition: transform 0.5s;
-        }
-        
-        .property-card:hover .property-img {
-            transform: scale(1.05);
-        }
-        
-        .property-info {
-            padding: 25px;
-        }
-        
-        .property-title {
-            font-size: 22px;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
-        
-        .property-location {
-            color: var(--text-secondary);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .property-location i {
-            margin-right: 8px;
-            color: var(--logo-gold);
-        }
-        
-        .property-price {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--real-estate-green);
-            margin-bottom: 15px;
-        }
-        
-        .property-description {
-            color: var(--text-secondary);
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-        
-        .property-features {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border-color);
-        }
-        
-        .feature {
-            text-align: center;
-        }
-        
-        .feature i {
-            color: var(--logo-gold);
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
-        
-        .feature div {
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-        
-        /* About & Contact Sections */
-        .about-section, .contact-section {
-            padding: 80px 0;
-        }
-        
-        .about-section {
-            background-color: var(--bg-secondary);
-        }
-        
-        .about-content {
-            display: flex;
-            align-items: center;
-            gap: 50px;
-        }
-        
-        .about-text {
-            flex: 1;
-        }
-        
-        .about-text p {
-            color: var(--text-secondary);
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-        
-        .about-img {
-            flex: 1;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px var(--shadow-color);
-            border: 1px solid var(--border-color);
-        }
-        
-        .about-img img {
-            width: 100%;
-            height: auto;
-            display: block;
-            transition: transform 0.5s;
-        }
-        
-        .about-img:hover img {
-            transform: scale(1.05);
-        }
-        
-        .contact-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-        }
-        
-        .contact-item {
-            background-color: var(--bg-card);
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px var(--shadow-color);
-            text-align: center;
-            transition: transform 0.3s;
-            border: 1px solid var(--border-color);
-        }
-        
-        .contact-item:hover {
-            transform: translateY(-5px);
-            border-color: var(--logo-gold);
-        }
-        
-        .contact-item i {
-            font-size: 36px;
-            color: var(--logo-gold);
-            margin-bottom: 20px;
-        }
-        
-        .contact-item h3 {
-            color: var(--text-primary);
-            margin-bottom: 10px;
-        }
-        
-        .contact-item p {
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-        
-        /* Contact Form */
-        .contact-form-container {
-            max-width: 800px;
-            margin: 50px auto 0;
-        }
-        
-        .contact-form {
-            background-color: var(--bg-card);
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 5px 25px var(--shadow-color);
-            border: 1px solid var(--border-color);
-        }
-        
-        .contact-form h3 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: var(--text-primary);
-        }
-        
-        .form-row {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .form-group {
-            flex: 1;
-            margin-bottom: 20px;
-        }
-        
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 12px 15px;
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-            color: var(--text-primary);
-        }
-        
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: var(--logo-gold);
-        }
-        
-        .form-group textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-        
-        /* Footer */
-        footer {
-            background-color: var(--logo-black);
-            padding: 60px 0 30px;
-            border-top: 1px solid var(--border-color);
-        }
-        
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            margin-bottom: 40px;
-        }
-        
-        .footer-column {
-            flex: 1;
-            min-width: 250px;
-            margin-bottom: 30px;
-            padding-right: 20px;
-        }
-        
-        .footer-column h3 {
-            font-size: 20px;
-            margin-bottom: 20px;
-            color: var(--logo-gold);
-        }
-        
-        .footer-column p {
-            color: var(--text-secondary);
-            margin-bottom: 20px;
-        }
-        
-        .footer-links {
-            list-style: none;
-        }
-        
-        .footer-links li {
-            margin-bottom: 10px;
-        }
-        
-        .footer-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .footer-links a:hover {
-            color: var(--logo-gold);
-        }
-        
-        .social-icons {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .social-icons a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            color: var(--text-primary);
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-        
-        .social-icons a:hover {
-            background-color: var(--logo-gold);
-            color: var(--logo-black);
-            transform: translateY(-3px);
-        }
-        
-        .copyright {
-            text-align: center;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-        /* Mobile Menu Button */
-.mobile-menu-btn {
-    display: none;
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: var(--text-primary);
-    cursor: pointer;
-    padding: 5px;
-    margin-left: 15px;
-    z-index: 1002;
-}
-
-/* Mobile Menu Overlay */
-.mobile-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
+    .stats-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
     width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    z-index: 999;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-}
-
-.mobile-overlay.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-/* Mobile Menu Sidebar */
-.mobile-menu {
-    position: fixed;
-    top: 0;
-    right: -100%;
-    width: 300px;
-    height: 100vh;
-    background-color: var(--bg-card);
-    box-shadow: -5px 0 15px var(--shadow-color);
-    transition: right 0.3s ease;
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    border-left: 1px solid var(--border-color);
-}
-
-.mobile-menu.active {
-    right: 0;
-}
-
-.mobile-menu-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.mobile-menu-header .logo {
-    font-size: 18px;
-}
-
-.close-menu {
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: var(--text-primary);
-    cursor: pointer;
-    padding: 5px;
-}
-
-.mobile-menu-links {
-    list-style: none;
-    padding: 20px;
-    flex-grow: 1;
-}
-
-.mobile-menu-links li {
-    margin-bottom: 20px;
-}
-
-.mobile-menu-link {
-    text-decoration: none;
-    color: var(--text-primary);
-    font-size: 18px;
-    font-weight: 500;
-    display: block;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border-color);
-    transition: color 0.3s;
-}
-
-.mobile-menu-link:hover {
-    color: var(--logo-gold);
-}
-
-.mobile-login-buttons {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    border-top: 1px solid var(--border-color);
-}
-
-/* Responsive Design */
-@media (max-width: 992px) {
-    .nav-links {
-        display: none;
+    max-width: 420px;
+    justify-content: center;
     }
-    
-    .mobile-menu-btn {
-        display: block;
+
+    .stat-item {
+      border-radius: 12px;
+      padding: 28px 32px;
+      text-align: center;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
-    
-    .login-buttons {
-        display: none;
+
+    .stat-item:hover {
+      transform: translateY(-4px);
     }
-}
 
-@media (max-width: 768px) {
-    .hero h1 {
-        font-size: 36px;
+    .stat-number {
+      font-size: 3.6rem;
+      font-weight: 800;
+      color: #ca8f19;           /* nice blue */
+      margin: 0 0 8px 0;
+      line-height: 1;
+      min-height: 85px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    
-    .hero p {/* Mobile Menu Button */
-.mobile-menu-btn {
-    display: none;
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: var(--text-primary);
-    cursor: pointer;
-    padding: 5px;
-    margin-left: 15px;
-    z-index: 1002;
-}
 
-/* Mobile Menu Overlay */
-.mobile-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    z-index: 999;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-}
-
-.mobile-overlay.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-/* Mobile Menu Sidebar */
-.mobile-menu {
-    position: fixed;
-    top: 0;
-    right: -100%;
-    width: 300px;
-    height: 100vh;
-    background-color: var(--bg-card);
-    box-shadow: -5px 0 15px var(--shadow-color);
-    transition: right 0.3s ease;
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    border-left: 1px solid var(--border-color);
-}
-
-.mobile-menu.active {
-    right: 0;
-}
-
-.mobile-menu-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.mobile-menu-header .logo {
-    font-size: 18px;
-}
-
-.close-menu {
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: var(--text-primary);
-    cursor: pointer;
-    padding: 5px;
-}
-
-.mobile-menu-links {
-    list-style: none;
-    padding: 20px;
-    flex-grow: 1;
-}
-
-.mobile-menu-links li {
-    margin-bottom: 20px;
-}
-
-.mobile-menu-link {
-    text-decoration: none;
-    color: var(--text-primary);
-    font-size: 18px;
-    font-weight: 500;
-    display: block;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border-color);
-    transition: color 0.3s;
-}
-
-.mobile-menu-link:hover {
-    color: var(--logo-gold);
-}
-
-.mobile-login-buttons {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    border-top: 1px solid var(--border-color);
-}
-
-/* Responsive Design */
-@media (max-width: 992px) {
-    .nav-links {
-        display: none;
+    .stat-label {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: #ffffff;
     }
-    
-    .mobile-menu-btn {
-        display: block;
-    }
-    
-    .login-buttons {
-        display: none;
-    }
-}
 
-@media (max-width: 768px) {
-    .hero h1 {
-        font-size: 36px;
+    .currency {
+      font-size: 2.4rem;
+      vertical-align: super;
+      margin-left: 6px;
+      color: #ca8f19;
     }
-    
-    .hero p {
-        font-size: 18px;
-    }
-    
-    .properties-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .mobile-menu {
-        width: 280px;
-    }
-}
-        font-size: 18px;
-    }
-    
-    .properties-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .mobile-menu {
-        width: 280px;
-    }
-}
-        
-        /* Responsive Design */
-        @media (max-width: 992px) {
-            .about-content {
-                flex-direction: column;
-            }
-            
-            .form-row {
-                flex-direction: column;
-                gap: 0;
-            }
-            
-            .nav-links {
-                display: none;
-            }
-            
-            .mobile-menu-btn {
-                display: block;
-                background: none;
-                border: none;
-                font-size: 24px;
-                color: var(--text-primary);
-                cursor: pointer;
-            }
-         /* Mobile Menu Button */
-.mobile-menu-btn {
-    display: none;
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: var(--text-primary);
-    cursor: pointer;
-    padding: 5px;
-    margin-left: 15px;
-    z-index: 1002;
-}
-
-
-            
-            .mobile-menu.active {
-                right: 0;
-            }
-            
-            .mobile-menu-links {
-                list-style: none;
-            }
-            
-            .mobile-menu-links li {
-                margin-bottom: 20px;
-            }
-            
-            .mobile-menu-links a {
-                text-decoration: none;
-                color: var(--text-primary);
-                font-size: 18px;
-                font-weight: 500;
-            }
-            
-            .close-menu {
-                position: absolute;
-                top: 25px;
-                right: 25px;
-                background: none;
-                border: none;
-                font-size: 24px;
-                color: var(--text-primary);
-                cursor: pointer;
-            }
-            
-            .overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.7);
-                z-index: 1000;
-                display: none;
-            }
-            
-            .overlay.active {
-                display: block;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 36px;
-            }
-            
-            .hero p {
-                font-size: 18px;
-            }
-            
-            .login-buttons {
-                flex-direction: column;
-                width: 100%;
-            }
-            
-            .btn {
-                text-align: center;
-            }
-            
-            .properties-grid {
-                grid-template-columns: 1fr;
-            }
-            
-        
-        }
-        
-        /* Animation */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.6s ease-out;
-        }
-        
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: var(--bg-secondary);
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--logo-gold);
-            border-radius: 5px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--hover-gold);
-        }
-    </style>
+  </style>
 </head>
 <body>
-    
-    <!-- Header & Navigation -->
-    <header style="background-color:#0E2432">
-        <div class="container">
-            <div class="nav-container">
-                <div class="logo">
-                    <img src="./assets/images/logo.png" alt="" height="60px" width="60px">
-                    <a href="index.php" class="logo" >
-                        <div class="logo-text">Assurenest<span>Reality</span></div>
-                    </a>
-                </div>
-                <div>
-                    <ul class="nav-links">
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#properties">Properties</a></li>
-                        <li><a href="#about">About Us</a></li>
-                        <li><a href="#contact">Contact</a></li>
-                    </ul>
-                </div>
-                 <div>
-              <div class="btn">
-    <a href="./pages/login.php" class="auth-btn">
-     <button class="btn">SIgn up</button>
-    </a>
+
+<div class="stats-wrapper">
+
+  <div class="stat-item">
+    <div class="stat-number" id="houses-sold">0</div>
+    <div class="stat-label">Total Houses Sold</div>
+  </div>
+
+  <div class="stat-item">
+    <div class="stat-number" id="properties-available">0</div>
+    <div class="stat-label">Total Properties Available</div>
+  </div>
+
+  <div class="stat-item">
+    <div class="stat-number" id="total-revenue">
+      <span id="revenue-value">0</span><span class="currency">₹ </span>
+    </div>
+    <div class="stat-label">Total Revenue</div>
+  </div>
+
 </div>
 
-                </div>
-                <button class="mobile-menu-btn">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-        </div>
-    </header>
-    
-    <!-- Mobile Menu Button -->
-<button class="mobile-menu-btn" id="mobileMenuBtn">
-    <i class="fas fa-bars"></i>
-</button>
+<script>
+// Change these values as needed
+const targets = {
+  housesSold: 1247,
+  propertiesAvailable: 389,
+  totalRevenue: 856000000           // ₹  85.6 Cr
+};
 
-<!-- Mobile Menu Overlay -->
-<div class="mobile-overlay" id="mobileOverlay"></div>
+function formatNumber(num) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 
-<!-- Mobile Menu Sidebar -->
-<div class="mobile-menu" id="mobileMenu">
-    <div class="mobile-menu-header">
-        <div class="logo">
-            <i class="fas fa-building logo-icon"></i>
-            <div class="logo-text">Prime<span>Properties</span></div>
-        </div>
-        <button class="close-menu" id="closeMenu">
-            <i class="fas fa-times"></i>
-        </button>
+function animateValue(id, start, end, duration = 2400) {
+  const obj = document.getElementById(id);
+  let startTime = null;
+
+  function step(timestamp) {
+    if (!startTime) startTime = timestamp;
+    const progress = Math.min((timestamp - startTime) / duration, 1);
+    
+    // smooth ease-out cubic
+    const eased = 1 - Math.pow(1 - progress, 3);
+    
+    const current = Math.floor(start + (end - start) * eased);
+    obj.textContent = formatNumber(current);
+
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    } else {
+      obj.textContent = formatNumber(end);
+    }
+  }
+
+  requestAnimationFrame(step);
+}
+
+// Start counters when page is loaded
+window.addEventListener('load', () => {
+  animateValue("houses-sold", 0, targets.housesSold);
+  animateValue("properties-available", 0, targets.propertiesAvailable);
+  animateValue("revenue-value", 0, targets.totalRevenue);
+});
+</script>
+        </section>
     </div>
-    
-    <ul class="mobile-menu-links">
-        <li><a href="#home" class="mobile-menu-link">Home</a></li>
-        <li><a href="#properties" class="mobile-menu-link">Properties</a></li>
-        <li><a href="#about" class="mobile-menu-link">About Us</a></li>
-        <li><a href="#contact" class="mobile-menu-link">Contact</a></li>
-    </ul>
-    
-    <div class="mobile-login-buttons">
-        <a href="pages/login.php?type=real_estate" class="btn btn-login-realestate">Real Estate Login</a>
-        <a href="pages/login.php?type=finance" class="btn btn-login-finance">Finance Login</a>
-    </div>
-</div>
-    
-    <!-- Hero Section -->
-    <section class="hero fade-in" id="home">
-        <div class="container">
-            <h1>Find Your Dream Property</h1>
-            <p>Prime Properties offers luxury real estate with premium financial solutions. Discover exclusive properties and personalized financing options tailored to your needs.</p>
-            <a href="#properties" class="btn btn-hero">Explore Properties</a>
-        </div>
-    </section>
-    
-    <!-- Recent Properties Section -->
-<!-- Recent Properties Section -->
-<section id="properties">
-    <div class="container">
-        <h2 class="section-title">Recently <span>Added</span> Properties</h2>
-        
-        <div class="properties-grid">
-            <?php
-            try {
-                // Include the database configuration
-                require_once 'includes/db.php';
-                
-                // Fetch properties from database using PDO
-                $query = "SELECT * FROM properties ORDER BY property_id DESC LIMIT 3";
-                $stmt = $pdo->query($query);
-                $properties = $stmt->fetchAll();
-                
-                if (count($properties) > 0) {
-                    foreach ($properties as $property) {
-            ?>
-            ?>
-            <div class="property-card fade-in">
-                <img src="includes/view_image.php?id=<?php echo $property['property_id']; ?>&num=1" alt="<?php echo htmlspecialchars($property['property_name']); ?>" class="property-img">
-                <div class="property-info">
-                    <h3 class="property-title"><?php echo htmlspecialchars($property['property_name']); ?></h3>
-                    <div class="property-location">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span><?php echo htmlspecialchars($property['location_city'] . ', ' . $property['location_state']); ?></span>
-                    </div>
-                    <div class="property-price">₹<?php echo number_format($property['price']); ?></div>
-                    <p class="property-description"><?php echo htmlspecialchars(substr($property['description'], 0, 100)) . '...'; ?></p>
-                    <div class="property-features">
-                       <div class="feature">
-                            <i class="fas fa-tag"></i>
-                            <div><?php echo htmlspecialchars($property['property_type']); ?></div>
-                       </div>
-                       <div class="feature">
-                            <i class="fas fa-map"></i>
-                            <div><?php echo htmlspecialchars($property['location_area']); ?></div>
-                       </div>
-                    </div>
-                </div>
-            </div>
-            <?php
-                    }
-                } else {
-                    throw new Exception("No properties found");
-                }
-                
-            } catch (Exception $e) {
-                // If there's an error with the database, show default properties
-                $default_properties = [
-                    [
-                        'image_url' => 'https://images.unsplash.com/photo-1613977257363-707ba9348227?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
-                        'title' => 'Modern Villa with Ocean View',
-                        'location' => 'Malibu, California',
-                        'price' => '3850000',
-                        'description' => 'A stunning contemporary villa featuring panoramic ocean views, infinity pool, and smart home technology.',
-                        'bedrooms' => 5,
-                        'bathrooms' => 6,
-                        'square_feet' => 6500
-                    ],
-                    [
-                        'image_url' => 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1171&q=80',
-                        'title' => 'Luxury Manhattan Penthouse',
-                        'location' => 'New York, NY',
-                        'price' => '8200000',
-                        'description' => 'An exclusive penthouse in the heart of Manhattan with private elevator, rooftop terrace, and premium finishes.',
-                        'bedrooms' => 4,
-                        'bathrooms' => 5,
-                        'square_feet' => 4200
-                    ],
-                    [
-                        'image_url' => 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
-                        'title' => 'Alpine Mountain Retreat',
-                        'location' => 'Aspen, Colorado',
-                        'price' => '2950000',
-                        'description' => 'A luxurious mountain retreat with ski-in/ski-out access, heated floors, and breathtaking mountain views.',
-                        'bedrooms' => 6,
-                        'bathrooms' => 7,
-                        'square_feet' => 8000
-                    ]
-                ];
-                
-                foreach ($default_properties as $property) {
-            ?>
-            <div class="property-card fade-in">
-                <img src="<?php echo $property['image_url']; ?>" alt="<?php echo $property['title']; ?>" class="property-img">
-                <div class="property-info">
-                    <h3 class="property-title"><?php echo $property['title']; ?></h3>
-                    <div class="property-location">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span><?php echo $property['location']; ?></span>
-                    </div>
-                    <div class="property-price">$<?php echo number_format($property['price']); ?></div>
-                    <p class="property-description"><?php echo $property['description']; ?></p>
-                    <div class="property-features">
-                        <div class="feature">
-                            <i class="fas fa-bed"></i>
-                            <div><?php echo $property['bedrooms']; ?> Beds</div>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-bath"></i>
-                            <div><?php echo $property['bathrooms']; ?> Baths</div>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-ruler-combined"></i>
-                            <div><?php echo number_format($property['square_feet']); ?> sqft</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <?php
-                }
-            }
-            ?>
-        </div>
-    </div>
-</section>
-    <!-- About Us Section -->
-    <section class="about-section fade-in" id="about">
-        <div class="container">
-            <h2 class="section-title">About <span>Prime Properties</span></h2>
-            <div class="about-content">
-                <div class="about-text">
-                    <p>Founded in 2005, Prime Properties has established itself as a premier real estate firm specializing in luxury properties and comprehensive financial solutions. Our unique approach combines real estate expertise with financial advisory services to provide our clients with a seamless experience.</p>
-                    <p>We understand that purchasing property is one of the most significant financial decisions you'll make. That's why we offer integrated real estate and financing solutions, ensuring you find not only the perfect property but also the optimal financial strategy to acquire it.</p>
-                    <p>Our team of experienced professionals has helped over 2,500 clients find their dream homes and secure financing that aligns with their long-term financial goals.</p>
-                    <br>
-                    <a href="#contact" class="btn btn-login-realestate">Get In Touch</a>
-                </div>
-                <div class="about-img">
-                    <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1073&q=80" alt="Prime Properties Office">
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Contact Us Section -->
-    <section class="contact-section fade-in" id="contact">
-        <div class="container">
-            <h2 class="section-title">Contact <span>Us</span></h2>
-            <p style="text-align: center; max-width: 800px; margin: 0 auto 40px; color: var(--text-secondary);">Our team is ready to assist you with all your real estate and financing needs. Reach out to us through any of the following channels.</p>
-            
-            <div class="contact-info">
-                <div class="contact-item">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <h3>Visit Our Office</h3>
-                    <p>123 Luxury Avenue<br>Beverly Hills, CA 90210</p>
-                </div>
-                
-                <div class="contact-item">
-                    <i class="fas fa-phone"></i>
-                    <h3>Call Us</h3>
-                    <p>+1 (310) 555-1234 (Real Estate)<br>+1 (310) 555-5678 (Finance)</p>
-                </div>
-                
-                <div class="contact-item">
-                    <i class="fas fa-envelope"></i>
-                    <h3>Email Us</h3>
-                    <p>info@primeproperties.com<br>finance@primeproperties.com</p>
-                </div>
-            </div>
-            
-            <!-- Contact Form -->
-            <div class="contact-form-container">
-                <form action="includes/contact_form.php" method="POST" class="contact-form">
-                    <h3>Send us a Message</h3>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="name">Your Name</label>
-                            <input type="text" id="name" name="name" placeholder="Enter your name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Your Email</label>
-                            <input type="email" id="email" name="email" placeholder="Enter your email" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="subject">Subject</label>
-                        <input type="text" id="subject" name="subject" placeholder="Enter subject" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="message">Your Message</label>
-                        <textarea id="message" name="message" placeholder="Enter your message" required></textarea>
-                    </div>
-                    <div class="form-group" style="text-align: center;">
-                        <button type="submit" class="btn btn-login-finance">Send Message</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <div class="logo">
-                        <i class="fas fa-building logo-icon"></i>
-                        <div class="logo-text">Prime<span>Properties</span></div>
-                    </div>
-                    <p>Luxury real estate with integrated financial solutions for discerning clients.</p>
-                    <div class="social-icons">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-                
-                <div class="footer-column">
-                    <h3>Quick Links</h3>
-                    <ul class="footer-links">
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#properties">Properties</a></li>
-                        <li><a href="#about">About Us</a></li>
-                        <li><a href="#contact">Contact</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-column">
-                    <h3>Our Services</h3>
-                    <ul class="footer-links">
-                        <li>Luxury Property Sales</li>
-                        <li>Real Estate Investment</li>
-                        <li>Property Financing</li>
-                        <li>Mortgage Solutions</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="copyright">
-                &copy; <?php echo date('Y'); ?> Prime Properties. All rights reserved.
-            </div>
-        </div>
-    </footer>
     
     <script>
-        // Mobile menu functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-            const closeMenuBtn = document.querySelector('.close-menu');
-            const mobileMenu = document.querySelector('.mobile-menu');
-            const overlay = document.querySelector('.overlay');
-            
-            if (mobileMenuBtn) {
-                mobileMenuBtn.addEventListener('click', function() {
-                    mobileMenu.classList.add('active');
-                    overlay.classList.add('active');
-                    document.body.style.overflow = 'hidden';
-                });
-            }
-            
-            if (closeMenuBtn) {
-                closeMenuBtn.addEventListener('click', function() {
-                    mobileMenu.classList.remove('active');
-                    overlay.classList.remove('active');
-                    document.body.style.overflow = 'auto';
-                });
-            }
-            
-            if (overlay) {
-                overlay.addEventListener('click', function() {
-                    mobileMenu.classList.remove('active');
-                    this.classList.remove('active');
-                    document.body.style.overflow = 'auto';
-                });
-            }
-            
-            // Theme toggle functionality
-            const themeToggle = document.getElementById('themeToggle');
-            const body = document.body;
-            const themeIcon = themeToggle.querySelector('i');
-            const themeText = themeToggle.querySelector('span');
-            
-            // Check for saved theme preference
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            if (savedTheme === 'light') {
-                enableLightMode();
-            }
-            
-            themeToggle.addEventListener('click', function() {
-                if (body.getAttribute('data-theme') === 'dark') {
-                    enableLightMode();
-                    localStorage.setItem('theme', 'light');
-                } else {
-                    enableDarkMode();
-                    localStorage.setItem('theme', 'dark');
-                }
-            });
-            
-            function enableLightMode() {
-                body.setAttribute('data-theme', 'light');
-                body.style.backgroundColor = '#f8f9fa';
-                body.style.color = '#333';
-                themeIcon.className = 'fas fa-moon';
-                themeText.textContent = 'Dark Mode';
-                
-                // Update CSS variables for light mode
-                updateThemeVariables({
-                    '--bg-primary': '#f8f9fa',
-                    '--bg-secondary': '#ffffff',
-                    '--bg-card': '#ffffff',
-                    '--text-primary': '#333333',
-                    '--text-secondary': '#666666',
-                    '--border-color': '#e0e0e0',
-                    '--shadow-color': 'rgba(0, 0, 0, 0.1)',
-                    '--logo-black': '#1a1a1a'
-                });
-            }
-            
-            function enableDarkMode() {
-                body.setAttribute('data-theme', 'dark');
-                body.style.backgroundColor = '#0a0a0a';
-                body.style.color = '#ffffff';
-                themeIcon.className = 'fas fa-sun';
-                themeText.textContent = 'Light Mode';
-                
-                // Update CSS variables for dark mode
-                updateThemeVariables({
-                    '--bg-primary': '#0a0a0a',
-                    '--bg-secondary': '#1a1a1a',
-                    '--bg-card': '#222222',
-                    '--text-primary': '#ffffff',
-                    '--text-secondary': '#b0b0b0',
-                    '--border-color': '#333333',
-                    '--shadow-color': 'rgba(0, 0, 0, 0.5)',
-                    '--logo-black': '#121212'
-                });
-            }
-            
-            function updateThemeVariables(variables) {
-                const root = document.documentElement;
-                for (const [key, value] of Object.entries(variables)) {
-                    root.style.setProperty(key, value);
-                }
-            }
-            
-            // Smooth scrolling for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    const targetId = this.getAttribute('href');
-                    if (targetId === '#') return;
-                    
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        e.preventDefault();
-                        
-                        window.scrollTo({
-                            top: targetElement.offsetTop - 80,
-                            behavior: 'smooth'
-                        });
-                        
-                        // Close mobile menu if open
-                        if (mobileMenu) {
-                            mobileMenu.classList.remove('active');
-                        }
-                        if (overlay) {
-                            overlay.classList.remove('active');
-                            document.body.style.overflow = 'auto';
-                        }
-                    }
-                });
-            });
-            
-            // Add fade-in animation to elements on scroll
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-            
-            const observer = new IntersectionObserver(function(entries) {
+        // 1. Staggered entrance animation when loaded/visible
+        document.addEventListener('DOMContentLoaded', () => {
+            const hero = document.querySelector('.hero');
+            const animatedEls = document.querySelectorAll('.animate-on-enter');
+
+            // Optional: IntersectionObserver for better performance (if below fold)
+            const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        entry.target.classList.add('fade-in');
+                        animatedEls.forEach(el => el.classList.add('visible'));
+                        observer.unobserve(hero);
                     }
                 });
-            }, observerOptions);
-            
-            // Observe elements for animation
-            document.querySelectorAll('.property-card, .contact-item, .about-content').forEach(el => {
-                observer.observe(el);
-            });
+            }, { threshold: 0.15 });
+
+            observer.observe(hero);
+
+            // Fallback: trigger after small delay if observer not supported
+            setTimeout(() => {
+                animatedEls.forEach(el => el.classList.add('visible'));
+            }, 400);
         });
+
+        // 2. Interactive mouse / touch spotlight follow
+        const heroSection = document.querySelector('.hero');
+
+        function updateMousePosition(e) {
+            const rect = heroSection.getBoundingClientRect();
+            let x, y;
+
+            if (e.touches && e.touches.length > 0) {
+                // Touch support
+                const touch = e.touches[0];
+                x = touch.clientX - rect.left;
+                y = touch.clientY - rect.top;
+            } else {
+                // Mouse
+                x = e.clientX - rect.left;
+                y = e.clientY - rect.top;
+            }
+
+            // Normalize to percentage (better for different screen sizes)
+            const percentX = (x / rect.width) * 100;
+            const percentY = (y / rect.height) * 100;
+
+            heroSection.style.setProperty('--mouse-x', `${percentX}%`);
+            heroSection.style.setProperty('--mouse-y', `${percentY}%`);
+        }
+
+        heroSection.addEventListener('mousemove', updateMousePosition);
+        heroSection.addEventListener('touchmove', updateMousePosition, { passive: true });
+
+        // Optional: center on load / when mouse leaves
+        heroSection.addEventListener('mouseleave', () => {
+            heroSection.style.setProperty('--mouse-x', '50%');
+            heroSection.style.setProperty('--mouse-y', '50%');
+        });
+
     </script>
+    <!-- --------------------------------------------------------------------------- -->
+    <div class="clearfix"></div>
+    <!-- END CAROUSEL -->
+    <!-- END CAROSUEL -->
+    <div class="clearfix"></div>
+
+    <div class="search__area search__area-1" id="search__area-1">
+        <div class="container">
+            <div class="search__area-inner">
+                <div class="row">
+                    <div class="col-6 col-lg-3 col-md-3">
+                        <div class="form-group">
+                            <select class="wide select_option">
+                                <option data-display="Property Status">Property Status</option>
+                                <option>For Sale</option>
+                                <option disabled>For Rent</option>
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3 col-md-3">
+                        <div class="form-group">
+                            <select class="wide select_option">
+                                <option data-display="Property Type">Property Type</option>
+                                <option>Lands</option>
+                                <option>Villas</option>
+                                <option>Bungloows</option>
+                                <option>Row Houses</option>
+                                <option>Luxury Flats</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3 col-md-3">
+                        <div class="form-group">
+                            <select class="wide select_option">
+                                <option data-display="Area From">Area From </option>
+                                <option>1500 sqft</option>
+                                <option>1200 sqft</option>
+                                <option>900 sqft</option>
+                                <option>600 sqft</option>
+                                <option>300 sqft</option>
+                                <option>100 sqft</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3 col-md-3">
+                        <div class="form-group">
+                            <select class="wide select_option">
+                                <option data-display="State">State</option>
+                                <!-- <option>United Kingdom</option>
+                                <option>American Samoa</option>
+                                <option>Belgium</option>
+                                <option>Canada</option>
+                                <option>Delaware</option>
+                                <option>Indonesia</option>
+                                <option>Malaysia</option>
+                                <option>Japan</option> -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3 col-md-3">
+                        <div class="form-group">
+                            <select class="wide select_option">
+                                <option data-display="City">City</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                                <option>6</option>
+                                <option>7</option>
+                                <option>8</option>
+                                <option>9</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-6 col-lg-3 col-md-3">
+                        <div class="form-group">
+                            <select class="wide select_option">
+                                <option data-display="Area">City</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+
+
+                            </select>
+                        </div>
+                    </div>
+                    <!-- --------------------------------------------------------------------------- -->
+                    <style>
+                        .slidecontainer {
+                            width: 100%;
+                        }
+
+                        .slider {
+                            -webkit-appearance: none;
+                            width: 100%;
+                            height: 25px;
+                            background: #d3d3d3;
+                            outline: none;
+                            opacity: 0.7;
+                            -webkit-transition: .2s;
+                            transition: opacity .2s;
+                            border-radius: 12.5px;
+                        }
+
+                        .slider:hover {
+                            opacity: 1;
+                        }
+
+                        .slider::-webkit-slider-thumb {
+                            -webkit-appearance: none;
+                            appearance: none;
+                            width: 25px;
+                            height: 25px;
+                            background: #3454d1;
+                            cursor: pointer;
+                            border-radius: 12.5px;
+                        }
+
+                        .slider::-moz-range-thumb {
+                            width: 25px;
+                            height: 25px;
+                            background: #3454d1;
+                            cursor: pointer;
+                            border-radius: 12.5px;
+
+                        }
+                    </style>
+
+                    <div class="col-12 col-lg-3 col-md-3">
+                        <div class="form-group">
+                            <div class="slidecontainer">
+                                <input type="range" min="100000" max="50000000" value="50" class="slider" id="myRange">
+                                <p>Price Range: <span id="demo"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        var slider = document.getElementById("myRange");
+                        var output = document.getElementById("demo");
+                        output.innerHTML = slider.value;
+
+                        slider.oninput = function () {
+                            output.innerHTML = this.value;
+                        }
+                    </script>
+                    <div class="col-12 col-lg-3 col-md-3">
+                        <div class="form-group">
+                            <button class="btn btn-primary text-uppercase btn-block"> search <i
+                                    class="fa fa-search ml-1"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+   
+    <section class="featured__property bg-light mt-5" id="properties">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-lg-6 mx-auto">
+                    <div class="title__head">
+                        <h2 class="text-center text-capitalize">
+                            Recent Property
+                        </h2>
+                        <p class="text-center text-capitalize">We provide full service at every step.</p>
+
+                    </div>
+                </div>
+            </div>
+            <div class="featured__property-carousel owl-carousel owl-theme">
+
+                <?php
+    require_once 'includes/db.php';
+
+    $sql = "SELECT property_id, property_type, property_name, 
+                   location_area, location_city, 
+                   price, sqft, rooms, bathrooms, kitchens,
+                   status
+            FROM properties 
+            WHERE status = 'available' 
+            ";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($rows) {
+        foreach ($rows as $row) {
+            $price_raw = (float)$row['price'];
+            if ($price_raw >= 10000000) {
+                $price_display = "₹ " . number_format($price_raw / 10000000, 2) . " Cr";
+            } elseif ($price_raw >= 100000) {
+                $price_display = "₹ " . number_format($price_raw / 100000, 2) . " Lac";
+            } else {
+                $price_display = "₹ " . number_format($price_raw);
+            }
+
+            $area_display = $row['sqft'] ? number_format($row['sqft'], 0) . " sq ft" : "N/A";
+            $image_src    = "images/500x400.jpg"; // ← change later
+
+            $type     = htmlspecialchars(ucfirst($row['property_type'] ?? 'Property'));
+            $name     = htmlspecialchars($row['property_name'] ?? 'Unnamed Property');
+            $location = htmlspecialchars(trim($row['location_area'] . ', ' . $row['location_city']));
+            $baths    = $row['bathrooms'] ?? 0;
+            $kitchens = $row['kitchens'] ?? 0;
+            $rooms    = $row['rooms'] ?? 0;
+    ?>
+                <div class="item">
+                    <div class="card__image card__box">
+                        <div class="card__image-header h-250">
+                            <div class="ribbon text-uppercase">Available</div>
+                            <img src="<?php echo $image_src; ?>" alt="<?php echo $name; ?>"
+                                class="img-fluid w100 img-transition">
+                            <div class="info"> for sale</div>
+                        </div>
+                        <div class="card__image-body">
+                            <span class="badge badge-primary text-capitalize mb-2"><?php echo $type; ?></span>
+                            <h6 class="text-capitalize"><?php echo $name; ?></h6>
+                            <p class="text-capitalize">
+                                <i class="fa fa-map-marker"></i> <?php echo $location; ?>
+                            </p>
+                            <ul class="list-inline card__content">
+                            <?php if($type=='Lands and Plots'){?>   
+                            <li class="list-inline-item">
+                                    <span>baths <br><i class="fa fa-bath"></i> <?php echo $baths; ?></span>
+                                </li>
+                                <li class="list-inline-item">
+                                    <span>kitchens <br><i class="fa fa-utensils"></i> <?php echo $kitchens; ?></span>
+                                </li>
+                                <li class="list-inline-item">
+                                    <span>rooms <br><i class="fa fa-inbox"></i> <?php echo $rooms; ?></span>
+                                </li>
+                                <?php }?> 
+                                <li class="list-inline-item">
+                                    <span>area <br><i class="fa fa-map"></i> <?php echo $area_display; ?></span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card__image-footer">
+                            <figure>
+                                <img src="images/80x80.jpg" alt="" class="img-fluid rounded-circle">
+                            </figure>
+                            <ul class="list-inline my-auto">
+                                <li class="list-inline-item pt-2">
+                                    <a href="#">ASSURNEST<br>REALITY</a>
+                                </li>
+                            </ul>
+                            <ul class="list-inline my-auto ml-auto">
+                                <li class="list-inline-item">
+                                    <h6><?php echo $price_display; ?></h6>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <?php
+        }
+    } else {
+        echo '<div class="item"><div class="text-center py-5">No properties available right now.</div></div>';
+    }
+    ?>
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+            <!-- </div> -->
+    </section>
+    <!-- Land and plots PROPERTIES -->
+    <section class="featured__property space-area" id="p1">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-lg-6 mx-auto">
+                    <div class="title__head">
+                        <h2 class="text-center text-capitalize">
+                            Land and Plots
+                        </h2>
+                        <p class="text-center text-capitalize">handpicked exclusive properties by our team.</p>
+
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="featured__property-carousel owl-carousel owl-theme">
+
+                <?php
+    require_once 'includes/db.php';
+
+    $sql = "SELECT property_id, property_type, property_name, 
+                   location_area, location_city, 
+                   price, sqft, rooms, bathrooms, kitchens,
+                   status
+            FROM properties 
+            WHERE status = 'available' and property_type = 'Lands and Plots'
+            ";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($rows) {
+        foreach ($rows as $row) {
+            $price_raw = (float)$row['price'];
+            if ($price_raw >= 10000000) {
+                $price_display = "₹ " . number_format($price_raw / 10000000, 2) . " Cr";
+            } elseif ($price_raw >= 100000) {
+                $price_display = "₹ " . number_format($price_raw / 100000, 2) . " Lac";
+            } else {
+                $price_display = "₹ " . number_format($price_raw);
+            }
+
+            $area_display = $row['sqft'] ? number_format($row['sqft'], 0) . " sq ft" : "N/A";
+            $image_src    = "images/500x400.jpg"; // ← change later
+
+            $type     = htmlspecialchars(ucfirst($row['property_type'] ?? 'Property'));
+            $name     = htmlspecialchars($row['property_name'] ?? 'Unnamed Property');
+            $location = htmlspecialchars(trim($row['location_area'] . ', ' . $row['location_city']));
+            $baths    = $row['bathrooms'] ?? 0;
+            $kitchens = $row['kitchens'] ?? 0;
+            $rooms    = $row['rooms'] ?? 0;
+    ?>
+                <div class="item">
+                    <div class="card__image card__box">
+                        <div class="card__image-header h-250">
+                            <div class="ribbon text-uppercase">Available</div>
+                            <img src="<?php echo $image_src; ?>" alt="<?php echo $name; ?>"
+                                class="img-fluid w100 img-transition">
+                            <div class="info"> for sale</div>
+                        </div>
+                        <div class="card__image-body">
+                            <span class="badge badge-primary text-capitalize mb-2"><?php echo $type; ?></span>
+                            <h6 class="text-capitalize"><?php echo $name; ?></h6>
+                            <p class="text-capitalize">
+                                <i class="fa fa-map-marker"></i> <?php echo $location; ?>
+                            </p>
+                            <ul class="list-inline card__content">
+                                <!-- <li class="list-inline-item">
+                                    <span>baths <br><i class="fa fa-bath"></i> <?php echo $baths; ?></span>
+                                </li>
+                                <li class="list-inline-item">
+                                    <span>kitchens <br><i class="fa fa-utensils"></i> <?php echo $kitchens; ?></span>
+                                </li>
+                                <li class="list-inline-item">
+                                    <span>rooms <br><i class="fa fa-inbox"></i> <?php echo $rooms; ?></span>
+                                </li> -->
+                                <li class="list-inline-item">
+                                    <span>area <br><i class="fa fa-map"></i> <?php echo $area_display; ?></span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card__image-footer">
+                            <figure>
+                                <img src="images/80x80.jpg" alt="" class="img-fluid rounded-circle">
+                            </figure>
+                            <ul class="list-inline my-auto">
+                                <li class="list-inline-item pt-2">
+                                    <a href="#">ASSURNEST<br>REALITY</a>
+                                </li>
+                            </ul>
+                            <ul class="list-inline my-auto ml-auto">
+                                <li class="list-inline-item">
+                                    <h6><?php echo $price_display; ?></h6>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <?php
+        }
+    } else {
+        echo '<div class="item"><div class="text-center py-5">No properties available right now.</div></div>';
+    }
+    ?>
+
+            </div>
+
+
+
+
+
+
+
+        </div>
+    </section>
+    <section class="featured__property space-area" id="p2">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-lg-6 mx-auto">
+                    <div class="title__head">
+                        <h2 class="text-center text-capitalize">
+                            Villa and Apartments
+                        </h2>
+                        <p class="text-center text-capitalize">handpicked exclusive properties by our team.</p>
+
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+             <div class="featured__property-carousel owl-carousel owl-theme">
+
+    <?php
+    require_once 'includes/db.php';
+
+    $sql = "SELECT property_id, property_type, property_name, 
+                   location_area, location_city, 
+                   price, sqft, rooms, bathrooms, kitchens,
+                   status
+            FROM properties 
+            WHERE status = 'available' and  property_type = 'Villas'
+            ";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($rows) {
+        foreach ($rows as $row) {
+            $price_raw = (float)$row['price'];
+            if ($price_raw >= 10000000) {
+                $price_display = "₹ " . number_format($price_raw / 10000000, 2) . " Cr";
+            } elseif ($price_raw >= 100000) {
+                $price_display = "₹ " . number_format($price_raw / 100000, 2) . " Lac";
+            } else {
+                $price_display = "₹ " . number_format($price_raw);
+            }
+
+            $area_display = $row['sqft'] ? number_format($row['sqft'], 0) . " sq ft" : "N/A";
+            $image_src    = "images/500x400.jpg"; // ← change later
+
+            $type     = htmlspecialchars(ucfirst($row['property_type'] ?? 'Property'));
+            $name     = htmlspecialchars($row['property_name'] ?? 'Unnamed Property');
+            $location = htmlspecialchars(trim($row['location_area'] . ', ' . $row['location_city']));
+            $baths    = $row['bathrooms'] ?? 0;
+            $kitchens = $row['kitchens'] ?? 0;
+            $rooms    = $row['rooms'] ?? 0;
+    ?>
+            <div class="item">
+                <div class="card__image card__box">
+                    <div class="card__image-header h-250">
+                        <div class="ribbon text-uppercase">Available</div>
+                        <img src="<?php echo $image_src; ?>" alt="<?php echo $name; ?>" class="img-fluid w100 img-transition">
+                        <div class="info"> for sale</div>
+                    </div>
+                    <div class="card__image-body">
+                        <span class="badge badge-primary text-capitalize mb-2"><?php echo $type; ?></span>
+                        <h6 class="text-capitalize"><?php echo $name; ?></h6>
+                        <p class="text-capitalize">
+                            <i class="fa fa-map-marker"></i> <?php echo $location; ?>
+                        </p>
+                        <ul class="list-inline card__content">
+                            <li class="list-inline-item">
+                                <span>baths <br><i class="fa fa-bath"></i> <?php echo $baths; ?></span>
+                            </li>
+                            <li class="list-inline-item">
+                                <span>kitchens <br><i class="fa fa-utensils"></i> <?php echo $kitchens; ?></span>
+                            </li>
+                            <li class="list-inline-item">
+                                <span>rooms <br><i class="fa fa-inbox"></i> <?php echo $rooms; ?></span>
+                            </li>
+                            <li class="list-inline-item">
+                                <span>area <br><i class="fa fa-map"></i> <?php echo $area_display; ?></span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card__image-footer">
+                        <figure>
+                            <img src="images/80x80.jpg" alt="" class="img-fluid rounded-circle">
+                        </figure>
+                        <ul class="list-inline my-auto">
+                            <li class="list-inline-item pt-2">
+                                <a href="#">ASSURNEST<br>REALITY</a>
+                            </li>
+                        </ul>
+                        <ul class="list-inline my-auto ml-auto">
+                            <li class="list-inline-item">
+                                <h6><?php echo $price_display; ?></h6>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+    <?php
+        }
+    } else {
+        echo '<div class="item"><div class="text-center py-5">No properties available right now.</div></div>';
+    }
+    ?>
+
+</div>
+
+
+
+
+
+
+        </div>
+    </section>
+    <section class="featured__property space-area" id="p3">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-lg-6 mx-auto">
+                    <div class="title__head">
+                        <h2 class="text-center text-capitalize">
+                            Luxury Flats
+                        </h2>
+                        <p class="text-center text-capitalize">handpicked exclusive properties by our team.</p>
+
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+             <div class="featured__property-carousel owl-carousel owl-theme">
+
+    <?php
+    require_once 'includes/db.php';
+
+    $sql = "SELECT property_id, property_type, property_name, 
+                   location_area, location_city, 
+                   price, sqft, rooms, bathrooms, kitchens,
+                   status
+            FROM properties 
+            WHERE status = 'available' and  property_type = 'Flats'
+            ";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($rows) {
+        foreach ($rows as $row) {
+            $price_raw = (float)$row['price'];
+            if ($price_raw >= 10000000) {
+                $price_display = "₹ " . number_format($price_raw / 10000000, 2) . " Cr";
+            } elseif ($price_raw >= 100000) {
+                $price_display = "₹ " . number_format($price_raw / 100000, 2) . " Lac";
+            } else {
+                $price_display = "₹ " . number_format($price_raw);
+            }
+
+            $area_display = $row['sqft'] ? number_format($row['sqft'], 0) . " sq ft" : "N/A";
+            $image_src    = "images/500x400.jpg"; // ← change later
+
+            $type     = htmlspecialchars(ucfirst($row['property_type'] ?? 'Property'));
+            $name     = htmlspecialchars($row['property_name'] ?? 'Unnamed Property');
+            $location = htmlspecialchars(trim($row['location_area'] . ', ' . $row['location_city']));
+            $baths    = $row['bathrooms'] ?? 0;
+            $kitchens = $row['kitchens'] ?? 0;
+            $rooms    = $row['rooms'] ?? 0;
+    ?>
+            <div class="item">
+                <div class="card__image card__box">
+                    <div class="card__image-header h-250">
+                        <div class="ribbon text-uppercase">Available</div>
+                        <img src="<?php echo $image_src; ?>" alt="<?php echo $name; ?>" class="img-fluid w100 img-transition">
+                        <div class="info"> for sale</div>
+                    </div>
+                    <div class="card__image-body">
+                        <span class="badge badge-primary text-capitalize mb-2"><?php echo $type; ?></span>
+                        <h6 class="text-capitalize"><?php echo $name; ?></h6>
+                        <p class="text-capitalize">
+                            <i class="fa fa-map-marker"></i> <?php echo $location; ?>
+                        </p>
+                        <ul class="list-inline card__content">
+                            <li class="list-inline-item">
+                                <span>baths <br><i class="fa fa-bath"></i> <?php echo $baths; ?></span>
+                            </li>
+                            <li class="list-inline-item">
+                                <span>kitchens <br><i class="fa fa-utensils"></i> <?php echo $kitchens; ?></span>
+                            </li>
+                            <li class="list-inline-item">
+                                <span>rooms <br><i class="fa fa-inbox"></i> <?php echo $rooms; ?></span>
+                            </li>
+                            <li class="list-inline-item">
+                                <span>area <br><i class="fa fa-map"></i> <?php echo $area_display; ?></span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card__image-footer">
+                        <figure>
+                            <img src="images/80x80.jpg" alt="" class="img-fluid rounded-circle">
+                        </figure>
+                        <ul class="list-inline my-auto">
+                            <li class="list-inline-item pt-2">
+                                <a href="#">ASSURNEST<br>REALITY</a>
+                            </li>
+                        </ul>
+                        <ul class="list-inline my-auto ml-auto">
+                            <li class="list-inline-item">
+                                <h6><?php echo $price_display; ?></h6>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+    <?php
+        }
+    } else {
+        echo '<div class="item"><div class="text-center py-5">No properties available right now.</div></div>';
+    }
+    ?>
+
+</div>
+
+        </div>
+    </section>
+    <section class="featured__property space-area" id="p4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-lg-6 mx-auto">
+                    <div class="title__head">
+                        <h2 class="text-center text-capitalize">
+                            Row Houses
+                        </h2>
+                        <p class="text-center text-capitalize">handpicked exclusive properties by our team.</p>
+
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+             <div class="featured__property-carousel owl-carousel owl-theme">
+
+    <?php
+    require_once 'includes/db.php';
+
+    $sql = "SELECT property_id, property_type, property_name, 
+                   location_area, location_city, 
+                   price, sqft, rooms, bathrooms, kitchens,
+                   status
+            FROM properties 
+            WHERE status = 'available' and  property_type = 'Row Houses'
+            ";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($rows) {
+        foreach ($rows as $row) {
+            $price_raw = (float)$row['price'];
+            if ($price_raw >= 10000000) {
+                $price_display = "₹ " . number_format($price_raw / 10000000, 2) . " Cr";
+            } elseif ($price_raw >= 100000) {
+                $price_display = "₹ " . number_format($price_raw / 100000, 2) . " Lac";
+            } else {
+                $price_display = "₹ " . number_format($price_raw);
+            }
+
+            $area_display = $row['sqft'] ? number_format($row['sqft'], 0) . " sq ft" : "N/A";
+            $image_src    = "images/500x400.jpg"; // ← change later
+
+            $type     = htmlspecialchars(ucfirst($row['property_type'] ?? 'Property'));
+            $name     = htmlspecialchars($row['property_name'] ?? 'Unnamed Property');
+            $location = htmlspecialchars(trim($row['location_area'] . ', ' . $row['location_city']));
+            $baths    = $row['bathrooms'] ?? 0;
+            $kitchens = $row['kitchens'] ?? 0;
+            $rooms    = $row['rooms'] ?? 0;
+    ?>
+            <div class="item">
+                <div class="card__image card__box">
+                    <div class="card__image-header h-250">
+                        <div class="ribbon text-uppercase">Available</div>
+                        <img src="<?php echo $image_src; ?>" alt="<?php echo $name; ?>" class="img-fluid w100 img-transition">
+                        <div class="info"> for sale</div>
+                    </div>
+                    <div class="card__image-body">
+                        <span class="badge badge-primary text-capitalize mb-2"><?php echo $type; ?></span>
+                        <h6 class="text-capitalize"><?php echo $name; ?></h6>
+                        <p class="text-capitalize">
+                            <i class="fa fa-map-marker"></i> <?php echo $location; ?>
+                        </p>
+                        <ul class="list-inline card__content">
+                            <li class="list-inline-item">
+                                <span>baths <br><i class="fa fa-bath"></i> <?php echo $baths; ?></span>
+                            </li>
+                            <li class="list-inline-item">
+                                <span>kitchens <br><i class="fa fa-utensils"></i> <?php echo $kitchens; ?></span>
+                            </li>
+                            <li class="list-inline-item">
+                                <span>rooms <br><i class="fa fa-inbox"></i> <?php echo $rooms; ?></span>
+                            </li>
+                            <li class="list-inline-item">
+                                <span>area <br><i class="fa fa-map"></i> <?php echo $area_display; ?></span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card__image-footer">
+                        <figure>
+                            <img src="images/80x80.jpg" alt="" class="img-fluid rounded-circle">
+                        </figure>
+                        <ul class="list-inline my-auto">
+                            <li class="list-inline-item pt-2">
+                                <a href="#">ASSURNEST<br>REALITY</a>
+                            </li>
+                        </ul>
+                        <ul class="list-inline my-auto ml-auto">
+                            <li class="list-inline-item">
+                                <h6><?php echo $price_display; ?></h6>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+    <?php
+        }
+    } else {
+        echo '<div class="item"><div class="text-center py-5">No properties available right now.</div></div>';
+    }
+    ?>
+
+</div>
+
+
+
+        </div>
+    </section>
+
+
+
+      <section class="featured__property space-area" id="p5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-lg-6 mx-auto">
+                    <div class="title__head">
+                        <h2 class="text-center text-capitalize">
+                            Bungalows
+                        </h2>
+                        <p class="text-center text-capitalize">handpicked exclusive properties by our team.</p>
+
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+             <div class="featured__property-carousel owl-carousel owl-theme">
+
+    <?php
+    require_once 'includes/db.php';
+
+    $sql = "SELECT property_id, property_type, property_name, 
+                   location_area, location_city, 
+                   price, sqft, rooms, bathrooms, kitchens,
+                   status
+            FROM properties 
+            WHERE status = 'available' and  property_type = 'Bungalows'
+            ";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($rows) {
+        foreach ($rows as $row) {
+            $price_raw = (float)$row['price'];
+            if ($price_raw >= 10000000) {
+                $price_display = "₹ " . number_format($price_raw / 10000000, 2) . " Cr";
+            } elseif ($price_raw >= 100000) {
+                $price_display = "₹ " . number_format($price_raw / 100000, 2) . " Lac";
+            } else {
+                $price_display = "₹ " . number_format($price_raw);
+            }
+
+            $area_display = $row['sqft'] ? number_format($row['sqft'], 0) . " sq ft" : "N/A";
+            $image_src    = "images/500x400.jpg"; // ← change later
+
+            $type     = htmlspecialchars(ucfirst($row['property_type'] ?? 'Property'));
+            $name     = htmlspecialchars($row['property_name'] ?? 'Unnamed Property');
+            $location = htmlspecialchars(trim($row['location_area'] . ', ' . $row['location_city']));
+            $baths    = $row['bathrooms'] ?? 0;
+            $kitchens = $row['kitchens'] ?? 0;
+            $rooms    = $row['rooms'] ?? 0;
+    ?>
+            <div class="item">
+                <div class="card__image card__box">
+                    <div class="card__image-header h-250">
+                        <div class="ribbon text-uppercase">Available</div>
+                        <img src="<?php echo $image_src; ?>" alt="<?php echo $name; ?>" class="img-fluid w100 img-transition">
+                        <div class="info"> for sale</div>
+                    </div>
+                    <div class="card__image-body">
+                        <span class="badge badge-primary text-capitalize mb-2"><?php echo $type; ?></span>
+                        <h6 class="text-capitalize"><?php echo $name; ?></h6>
+                        <p class="text-capitalize">
+                            <i class="fa fa-map-marker"></i> <?php echo $location; ?>
+                        </p>
+                        <ul class="list-inline card__content">
+                            <li class="list-inline-item">
+                                <span>baths <br><i class="fa fa-bath"></i> <?php echo $baths; ?></span>
+                            </li>
+                            <li class="list-inline-item">
+                                <span>kitchens <br><i class="fa fa-utensils"></i> <?php echo $kitchens; ?></span>
+                            </li>
+                            <li class="list-inline-item">
+                                <span>rooms <br><i class="fa fa-inbox"></i> <?php echo $rooms; ?></span>
+                            </li>
+                            <li class="list-inline-item">
+                                <span>area <br><i class="fa fa-map"></i> <?php echo $area_display; ?></span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card__image-footer">
+                        <figure>
+                            <img src="images/80x80.jpg" alt="" class="img-fluid rounded-circle">
+                        </figure>
+                        <ul class="list-inline my-auto">
+                            <li class="list-inline-item pt-2">
+                                <a href="#">ASSURNEST<br>REALITY</a>
+                            </li>
+                        </ul>
+                        <ul class="list-inline my-auto ml-auto">
+                            <li class="list-inline-item">
+                                <h6><?php echo $price_display; ?></h6>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+    <?php
+        }
+    } else {
+        echo '<div class="item"><div class="text-center py-5">No properties available right now.</div></div>';
+    }
+    ?>
+
+</div>
+
+
+
+        </div>
+    </section>
+    <!-- END FEATURED PROPERTIES -->
+
+    <!-- RECENT PROPERTY -->
+
+    <!-- END RECENT PROPERTY -->
+
+    <!-- PRICITNG TABLE -->
+
+    <!-- END PRICITNG TABLE -->
+
+    <!-- BRAND PARTNER -->
+    <section class="projects__partner bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <div class="title__head">
+                        <h2 class="text-center text-capitalize">our partners</h2>
+                        <p class="text-center text-capitalize">Brand Partners Successful Projects Trusted Many Clients
+                            Real Estate </p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="projects__partner-logo">
+                        <ul class="list-inline mb-0">
+                            <li class="list-inline-item">
+                                <img src="images/partner-logo6.png" alt="" class="img-fluid">
+                            </li>
+                            <li class="list-inline-item">
+                                <img src="images/partner-logo7.png" alt="" class="img-fluid">
+                            </li>
+                            <li class="list-inline-item">
+                                <img src="images/partner-logo8.png" alt="" class="img-fluid">
+                            </li>
+                            <li class="list-inline-item">
+                                <img src="images/partner-logo1.png" alt="" class="img-fluid">
+                            </li>
+                            <li class="list-inline-item">
+                                <img src="images/partner-logo5.png" alt="" class="img-fluid">
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END BRAND PARTNER -->
+
+    <!-- TESTIMONIAL -->
+    <section id="r1">
+        <div class="container" >
+            <div class="row">
+                <div class="col-md-8 col-lg-6 mx-auto">
+                    <div class="title__head">
+                        <h2 class="text-center text-capitalize">
+                            what people says
+                        </h2>
+                        <p class="text-center text-capitalize">people says about walls property.</p>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="testimonial owl-carousel owl-theme">
+                <!-- TESTIMONIAL -->
+                <div class="item testimonial__block">
+                    <div class="testimonial__block-card bg-reviews">
+                        <p>
+                            Thank you walls property help me, choice dream home We were impressed with the build
+                            quality, Plus they are competitively priced.
+                        </p>
+                    </div>
+                    <div class="testimonial__block-users">
+                        <div class="testimonial__block-users-img">
+                            <img src="images/80x80.jpg" alt="" class="img-fluid">
+                        </div>
+                        <div class="testimonial__block-users-name">
+                            jhon doe <br>
+                            <span>owner, digital agency</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- END TESTIMONIAL -->
+                <!-- TESTIMONIAL -->
+                <div class="item testimonial__block">
+                    <div class="testimonial__block-card bg-reviews">
+                        <p>
+                            Thank you walls property help me, choice dream home We were impressed with the build
+                            quality, Plus they are competitively priced.
+                        </p>
+                    </div>
+                    <div class="testimonial__block-users">
+                        <div class="testimonial__block-users-img">
+                            <img src="images/80x80.jpg" alt="" class="img-fluid">
+                        </div>
+                        <div class="testimonial__block-users-name">
+                            jhon doe <br>
+                            <span>owner, digital agency</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- END TESTIMONIAL -->
+                <!-- TESTIMONIAL -->
+                <div class="item testimonial__block">
+                    <div class="testimonial__block-card bg-reviews">
+                        <p>
+                            Thank you walls property help me, choice dream home We were impressed with the build
+                            quality, Plus they are competitively priced.
+                        </p>
+                    </div>
+                    <div class="testimonial__block-users">
+                        <div class="testimonial__block-users-img">
+                            <img src="images/80x80.jpg" alt="" class="img-fluid">
+                        </div>
+                        <div class="testimonial__block-users-name">
+                            jhon doe <br>
+                            <span>owner, digital agency</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- END TESTIMONIAL -->
+                <!-- TESTIMONIAL -->
+                <div class="item testimonial__block">
+                    <div class="testimonial__block-card bg-reviews">
+                        <p>
+                            Thank you walls property help me, choice dream home We were impressed with the build
+                            quality, Plus they are competitively priced.
+                        </p>
+                    </div>
+                    <div class="testimonial__block-users">
+                        <div class="testimonial__block-users-img">
+                            <img src="images/80x80.jpg" alt="" class="img-fluid">
+                        </div>
+                        <div class="testimonial__block-users-name">
+                            jhon doe <br>
+                            <span>owner, digital agency</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- END TESTIMONIAL -->
+                <!-- TESTIMONIAL -->
+                <div class="item testimonial__block">
+                    <div class="testimonial__block-card bg-reviews">
+                        <p>
+                            Thank you walls property help me, choice dream home We were impressed with the build
+                            quality, Plus they are competitively priced.
+                        </p>
+                    </div>
+                    <div class="testimonial__block-users">
+                        <div class="testimonial__block-users-img">
+                            <img src="images/80x80.jpg" alt="" class="img-fluid">
+                        </div>
+                        <div class="testimonial__block-users-name">
+                            jhon doe <br>
+                            <span>owner, digital agency</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- END TESTIMONIAL -->
+            </div>
+        </div>
+    </section>
+    <!-- END TESTIMONIAL -->
+
+    <!-- BLOG -->
+
+    <section class="featured__property bg-light mt-5" id="properties">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-lg-6 mx-auto">
+                    <div class="title__head">
+                        <h2 class="text-center text-capitalize">
+                            Sold Out Properties
+                        </h2>
+                        <p class="text-center text-capitalize">We provide full service at every step.</p>
+
+                    </div>
+                </div>
+            </div>
+            <div class="featured__property-carousel owl-carousel owl-theme">
+
+                <?php
+    require_once 'includes/db.php';
+
+    $sql = "SELECT property_id, property_type, property_name, 
+                   location_area, location_city, 
+                   price, sqft, rooms, bathrooms, kitchens,
+                   status
+            FROM properties 
+            WHERE status = 'Sold' 
+            ";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($rows) {
+        foreach ($rows as $row) {
+            $price_raw = (float)$row['price'];
+            if ($price_raw >= 10000000) {
+                $price_display = "₹ " . number_format($price_raw / 10000000, 2) . " Cr";
+            } elseif ($price_raw >= 100000) {
+                $price_display = "₹ " . number_format($price_raw / 100000, 2) . " Lac";
+            } else {
+                $price_display = "₹ " . number_format($price_raw);
+            }
+
+            $area_display = $row['sqft'] ? number_format($row['sqft'], 0) . " sq ft" : "N/A";
+            $image_src    = "images/500x400.jpg"; // ← change later
+
+            $type     = htmlspecialchars(ucfirst($row['property_type'] ?? 'Property'));
+            $name     = htmlspecialchars($row['property_name'] ?? 'Unnamed Property');
+            $location = htmlspecialchars(trim($row['location_area'] . ', ' . $row['location_city']));
+            $baths    = $row['bathrooms'] ?? 0;
+            $kitchens = $row['kitchens'] ?? 0;
+            $rooms    = $row['rooms'] ?? 0;
+    ?>
+                <div class="item">
+                    <div class="card__image card__box">
+                        <div class="card__image-header h-250">
+                           
+                            <img src="<?php echo $image_src; ?>" alt="<?php echo $name; ?>"
+                                class="img-fluid w100 img-transition">
+                            <div class="INFO1" style="background-color:red;"> Sold Out </div>
+                        </div>
+                        <div class="card__image-body">
+                            <span class="badge badge-primary text-capitalize mb-2"><?php echo $type; ?></span>
+                            <h6 class="text-capitalize"><?php echo $name; ?></h6>
+                            <p class="text-capitalize">
+                                <i class="fa fa-map-marker"></i> <?php echo $location; ?>
+                            </p>
+                            <ul class="list-inline card__content">
+                            <?php if($type=='Lands and Plots'){?>   
+                            <li class="list-inline-item">
+                                    <span>baths <br><i class="fa fa-bath"></i> <?php echo $baths; ?></span>
+                                </li>
+                                <li class="list-inline-item">
+                                    <span>kitchens <br><i class="fa fa-utensils"></i> <?php echo $kitchens; ?></span>
+                                </li>
+                                <li class="list-inline-item">
+                                    <span>rooms <br><i class="fa fa-inbox"></i> <?php echo $rooms; ?></span>
+                                </li>
+                                <?php }?> 
+                                <li class="list-inline-item">
+                                    <span>area <br><i class="fa fa-map"></i> <?php echo $area_display; ?></span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card__image-footer">
+                            <figure>
+                                <img src="images/80x80.jpg" alt="" class="img-fluid rounded-circle">
+                            </figure>
+                            <ul class="list-inline my-auto">
+                                <li class="list-inline-item pt-2">
+                                    <a href="#">ASSURNEST<br>REALITY</a>
+                                </li>
+                            </ul>
+                            <ul class="list-inline my-auto ml-auto">
+                                <li class="list-inline-item">
+                                    <h6><?php echo $price_display; ?></h6>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <?php
+        }
+    } else {
+        echo '<div class="item"><div class="text-center py-5">No properties available right now.</div></div>';
+    }
+    ?>
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+            <!-- </div> -->
+    </section>
+   
+    <!-- END BLOG -->
+
+
+
+    <!-- CALL TO ACTION -->
+    <section class="cta-v1 py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-9">
+                    <h2 class="text-uppercase text-white">Looking To Sell Or Rent Your Property?</h2>
+                    <p class="text-capitalize text-white">We Will Assist You In The Best And Comfortable Property
+                        Services
+                        For You
+                    </p>
+
+                </div>
+                <div class="col-lg-3">
+                    <a href="#" class="btn btn-light text-uppercase ">request a quote
+                        <i class="fa fa-angle-right ml-3 arrow-btn "></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END CALL TO ACTION -->
+
+   
+
+    <!-- Footer  -->
+    <footer>
+        <div class="wrapper__footer bg-theme-footer">
+            <div class="container">
+                <div class="row">
+                    <!-- ADDRESS -->
+                    <div class="col-md-4">
+                        <div class="widget__footer">
+                            <figure>
+                                <img src="images/logo-blue.png" alt="" class="logo-footer">
+                            </figure>
+                            <p>
+                                Rethouse Real Estate is a premium Property template based on Bootstrap 4. Rethouse Real
+                                Estate helped thousands of clients to find the right property for their needs.
+
+                            </p>
+
+                            <ul class="list-unstyled mb-0 mt-3">
+                                <li> <b> <i class="fa fa-map-marker"></i></b><span>214 West Arnold St. New York, NY
+                                        10002</span> </li>
+                                <li> <b><i class="fa fa-phone-square"></i></b><span>(123) 345-6789</span> </li>
+                                <li> <b><i class="fa fa-phone-square"></i></b><span>(+100) 123 456 7890</span> </li>
+                                <li> <b><i class="fa fa-headphones"></i></b><span>support@realvilla.demo</span> </li>
+                                <li> <b><i class="fa fa-clock-o"></i></b><span>Mon - Sun / 9:00AM - 8:00PM</span> </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                    <!-- END ADDRESS -->
+
+                    <!-- QUICK LINKS -->
+                    <div class="col-md-4">
+                        <div class="widget__footer">
+                            <h4 class="footer-title">Quick Links</h4>
+                            <div class="link__category-two-column">
+                                <ul class="list-unstyled ">
+                                    <li class="list-inline-item">
+                                        <a href="#">Commercial</a>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <a href="#">business</a>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <a href="#">House</a>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <a href="#">Residential</a>
+                                    </li>
+
+                                    <li class="list-inline-item">
+                                        <a href="#">Residential Tower</a>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <a href="#">Beverly Hills</a>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <a href="#">Los angeles</a>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <a href="#">The beach</a>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <a href="#">Property Listing</a>
+                                    </li>
+
+                                    <li class="list-inline-item">
+                                        <a href="#">Clasic</a>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <a href="#">Modern Home</a>
+                                    </li>
+
+                                    <li class="list-inline-item">
+                                        <a href="#">Luxury</a>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <a href="#">Beach Pasadena</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END QUICK LINKS -->
+
+
+                    <!-- NEWSLETTERS -->
+                    <div class="col-md-4">
+                        <div class="widget__footer">
+                            <h4 class="footer-title">follow us </h4>
+                            <p class="mb-2">
+                                Follow us and stay in touch to get the latest news
+                            </p>
+                            <p>
+                                <button class="btn btn-social btn-social-o facebook mr-1">
+                                    <i class="fa fa-facebook-f"></i>
+                                </button>
+                                <button class="btn btn-social btn-social-o twitter mr-1">
+                                    <i class="fa fa-twitter"></i>
+                                </button>
+
+                                <button class="btn btn-social btn-social-o linkedin mr-1">
+                                    <i class="fa fa-linkedin"></i>
+                                </button>
+                                <button class="btn btn-social btn-social-o instagram mr-1">
+                                    <i class="fa fa-instagram"></i>
+                                </button>
+
+                                <button class="btn btn-social btn-social-o youtube mr-1">
+                                    <i class="fa fa-youtube"></i>
+                                </button>
+                            </p>
+                            <br>
+                            <h4 class="footer-title"></h4>
+                            <!-- Form Newsletter -->
+                            <div class="widget__form-newsletter ">
+                                <p>
+
+                                    
+                                </p>
+                                <div class="mt-3">
+                                    
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- END NEWSLETTER -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Bottom -->
+        <div class="bg__footer-bottom-v1">
+            <div class="container">
+                <div class="row flex-column-reverse flex-md-row">
+                    <div class="col-md-6">
+                        <span>
+                            © 2020 Rethouse Real Estate - Premium real estate & theme &amp; theme by
+                            <a href="#">retenvi.com</a>
+                        </span>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-inline ">
+                            <li class="list-inline-item">
+                                <a href="#">
+                                    privacy
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="#">
+                                    contact
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="#">
+                                    about
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="#">
+                                    faq
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Footer  -->
+    </footer>
+
+    <!-- SCROLL TO TOP -->
+    <a href="javascript:" id="return-to-top"><i class="fa fa-chevron-up"></i></a>
+    <!-- END SCROLL TO TOP -->
+    <script src="./js/index.bundle.js?fd365619e86ad9137a29"></script>
 </body>
+
 </html>

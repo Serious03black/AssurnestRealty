@@ -249,6 +249,35 @@ if (!$property) {
             <div class="detail-label">Commission (Agent)</div>
             <div class="detail-value"><?= htmlspecialchars($property['commission'] ?? 0) ?>%</div>
         </div>
+        
+        <?php if($property['status'] === 'available'): ?>
+        <div style="margin-top: 2rem; text-align:center;">
+            <form action="sell_property.php" method="POST" onsubmit="return confirm('Are you sure you want to mark this property as SOLD by you? This action cannot be undone.');">
+                <input type="hidden" name="property_id" value="<?= $property['property_id'] ?>">
+                <input type="hidden" name="sale_price" value="<?= $property['price'] ?>"> 
+                <!-- Using listed price as sale price for now -->
+                
+                <button type="submit" style="
+                    background: #28a745; 
+                    color: white; 
+                    border: none; 
+                    padding: 1rem 2rem; 
+                    font-size: 1.2rem; 
+                    border-radius: 8px; 
+                    cursor: pointer; 
+                    font-weight: bold;
+                    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+                    transition: transform 0.2s;
+                ">
+                    <i class="fas fa-check-circle"></i> Sell This Property
+                </button>
+            </form>
+        </div>
+        <?php else: ?>
+            <div style="margin-top: 2rem; text-align:center; padding: 1rem; background: #eee; border-radius: 8px; color: #777; font-weight: bold;">
+                Property is <?= ucfirst($property['status']) ?>
+            </div>
+        <?php endif; ?>
 
     </div>
 

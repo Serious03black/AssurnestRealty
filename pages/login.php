@@ -20,12 +20,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password   = $_POST['password'] ?? '';
 
     if (empty($identifier) || empty($password)) {
-        $error = "Please enter your email/username and password.";
+        $error = "Please enter your User ID and password.";
     } else {
         try {
             $user = null;
 
             // 1. Check admins (using 'user' field)
+            // Admins login with their 'user' column (e.g. admin)
             $stmt = $pdo->prepare("
                 SELECT admin_id AS id, admin_name AS name, user AS identifier, password, 'admin' AS role, 'approved' AS status
                 FROM admins 
@@ -34,23 +35,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$identifier]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // 2. If not admin → check employees
+            // 2. If not admin → check employees (using 'prefix' field)
             if (!$user) {
                 $stmt = $pdo->prepare("
-                    SELECT emp_id AS id, emp_name AS name, email AS identifier, password, 'employee' AS role, status
+                    SELECT emp_id AS id, emp_name AS name, prefix AS identifier, password, 'employee' AS role, status
                     FROM employees 
-                    WHERE email = ?
+                    WHERE prefix = ?
                 ");
                 $stmt->execute([$identifier]);
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
             }
 
-            // 3. If still not found → check cab drivers
+            // 3. If still not found → check cab drivers (using 'prefix' field)
             if (!$user) {
                 $stmt = $pdo->prepare("
-                    SELECT driver_id AS id, driver_name AS name, email AS identifier, password, 'driver' AS role, status
+                    SELECT driver_id AS id, driver_name AS name, prefix AS identifier, password, 'driver' AS role, status
                     FROM cab_drivers 
-                    WHERE email = ?
+                    WHERE prefix = ?
                 ");
                 $stmt->execute([$identifier]);
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -315,13 +316,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <h1 class="welcome-title">Welcome Back</h1>
         <p class="welcome-text">
-            Sign in to manage properties, track sales, commissions, and grow your real estate business.
+            Sign in to manage properties, track sales, check commissions, and view your referral bonuses.
+            <br><small style="opacity:0.7;">(For Employees, Cab Partners & Admins)</small>
         </p>
 
         <ul class="features">
             <li><i class="fas fa-check-circle"></i> Manage premium listings</li>
-            <li><i class="fas fa-check-circle"></i> Track sales & earnings</li>
-            <li><i class="fas fa-check-circle"></i> Client & team management</li>
+            <li><i class="fas fa-check-circle"></i> Track personal sales & ranking</li>
+            <li><i class="fas fa-check-circle"></i> <strong>Cab Partners:</strong> Earn referral bonuses</li>
             <li><i class="fas fa-check-circle"></i> Real-time performance stats</li>
         </ul>
     </div>
@@ -339,8 +341,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <form method="POST">
             <div class="form-group">
-                <label class="form-label">Email / Username</label>
-                <input type="text" class="form-control" name="identifier" required autofocus placeholder="Enter email or username">
+                <label class="form-label">User ID / Employee ID / Cab ID</label>
+                <input type="text" class="form-control" name="identifier" required autofocus placeholder="Enter your ID (e.g. emp101, cab202)">
             </div>
 
             <div class="form-group" style="position:relative;">

@@ -178,6 +178,12 @@
                 <i class="fas fa-handshake"></i>
                 <span>My Sales</span>
             </a>
+            <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'driver'): ?>
+            <a href="<?= BASE_URL ?>/pages/user/my_referrals.php" class="menu-item <?= basename($_SERVER['PHP_SELF']) === 'my_referrals.php' ? 'active' : '' ?>">
+                <i class="fas fa-users"></i>
+                <span>My Referrals</span>
+            </a>
+            <?php endif; ?>
         </div>
 
         <div class="menu-section">
