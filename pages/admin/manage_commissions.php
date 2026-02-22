@@ -116,9 +116,9 @@ unset($u);
 </head>
 <body>
 
-<div class="sidebar">
-    <?php include '../../includes/sidebar.php'; ?>
-</div>
+<nav class="sidebar">
+    <?php include '../../includes/sidebaradmin.php'; ?>
+</nav>
 
 <div class="main">
     <div class="header">

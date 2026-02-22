@@ -77,7 +77,7 @@
                     <!-- Search bar.// -->
                     <ul class="navbar-nav ">
                         <li>
-                            <a href="#" class="btn btn-primary text-capitalize">
+                            <a href="./pages/login.php" class="btn btn-primary text-capitalize">
                                 <i class="fa fa-sign-in mr-1"></i> Sign up</a>
                         </li>
                     </ul>

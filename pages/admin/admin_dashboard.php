@@ -19,7 +19,10 @@ $stats = [
     'total_drivers'         => 0,
     'pending_employees'     => 0,
     'pending_drivers'       => 0,
-    'top_earners'           => []
+    'top_earners'           => [],
+    'global_earned'         => 0,
+    'global_received'       => 0,
+    'global_pending'        => 0,
 ];
 
 // Fetch admin name
@@ -105,6 +108,24 @@ try {
         LIMIT 3
     ");
     $stats['top_earners'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // ── Global Commission Summary ──────────────────────────────────
+    // Total Earned = sum of (sale_price * commission%) across all sales
+    $stmt = $pdo->query("
+        SELECT COALESCE(SUM(
+            (CASE WHEN s.sale_price > 0 THEN s.sale_price ELSE p.price END)
+            * p.commission / 100
+        ), 0) AS earned
+        FROM property_sales s
+        JOIN properties p ON s.property_id = p.property_id
+    ");
+    $stats['global_earned'] = (float)($stmt->fetchColumn() ?: 0);
+
+    // Total Received = sum of all payments
+    $stmt = $pdo->query("SELECT COALESCE(SUM(amount), 0) FROM payments");
+    $stats['global_received'] = (float)($stmt->fetchColumn() ?: 0);
+
+    $stats['global_pending'] = $stats['global_earned'] - $stats['global_received'];
 
     // Recent properties (last 5)
     $stmt = $pdo->query("
@@ -383,16 +404,33 @@ try {
             <div class="stat-label">Sold</div>
         </div>
         <div class="stat-card">
-            <div class="stat-value">₹ <?= number_format($stats['total_commission'], 0) ?></div>
-            <div class="stat-label">Total Commission</div>
-        </div>
-        <div class="stat-card">
             <div class="stat-value"><?= $stats['total_employees'] ?></div>
             <div class="stat-label">Employees</div>
         </div>
         <div class="stat-card">
             <div class="stat-value"><?= $stats['total_drivers'] ?></div>
             <div class="stat-label">Cab Drivers</div>
+        </div>
+    </div>
+
+    <!-- Commission Summary Row -->
+    <div class="stats-row" style="margin-top:0; margin-bottom:2.5rem;">
+        <div class="stat-card" style="border-color:#22c55e;">
+            <div class="stat-value" style="color:#22c55e;">₹ <?= number_format($stats['global_earned'], 0) ?></div>
+            <div class="stat-label">Total Commission Earned</div>
+        </div>
+        <div class="stat-card" style="border-color:#3b82f6;">
+            <div class="stat-value" style="color:#3b82f6;">₹ <?= number_format($stats['global_received'], 0) ?></div>
+            <div class="stat-label">Total Commission Received</div>
+        </div>
+        <div class="stat-card" style="border-color:#ef4444;">
+            <div class="stat-value" style="color:#ef4444;">₹ <?= number_format(max(0, $stats['global_pending']), 0) ?></div>
+            <div class="stat-label">Total Pending Commission</div>
+        </div>
+        <div class="stat-card" style="flex:0 0 auto; min-width:200px;">
+            <a href="manage_commissions.php" style="color:var(--gold); font-weight:700; text-decoration:none; font-size:1.1rem;">
+                <i class="fas fa-money-bill-wave" style="margin-right:6px;"></i>Manage Commissions
+            </a>
         </div>
     </div>
 

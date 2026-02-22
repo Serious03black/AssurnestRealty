@@ -47,6 +47,10 @@
                 <i class="fas fa-chart-line"></i>
                 <span>Sales Reports</span>
             </a>
+            <a href="<?= BASE_URL ?>/pages/admin/manage_commissions.php" class="menu-item <?= basename($_SERVER['PHP_SELF']) === 'manage_commissions.php' ? 'active' : '' ?>">
+                <i class="fas fa-coins"></i>
+                <span>Commissions</span>
+            </a>
         </div>
     </div>
 </nav>
