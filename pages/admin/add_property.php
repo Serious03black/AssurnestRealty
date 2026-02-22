@@ -105,16 +105,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             line-height: 1.6;
         }
 
-        .sidebar { width: 260px; background: linear-gradient(180deg, var(--rich-green-dark), var(--rich-green)); color: white; height: 100vh; position: fixed; left: 0; top: 0; z-index: 1000; transition: transform 0.4s ease; box-shadow: 4px 0 25px rgba(0,0,0,0.5); }
-        .navbar { position: fixed; top: 0; left: 260px; right: 0; height: 75px; background: linear-gradient(90deg, var(--gold), var(--gold-dark)); color: var(--black); box-shadow: 0 4px 20px rgba(0,0,0,0.4); z-index: 999; display: flex; align-items: center; padding: 0 30px; font-weight: 600; transition: left 0.4s ease; }
-        .mobile-menu-btn { display: none; font-size: 1.9rem; cursor: pointer; color: var(--black); }
-
         .main-content {
-            margin-left: 260px;
-            margin-top: 75px;
             padding: 2.5rem 2rem;
-            min-height: calc(100vh - 75px);
-            transition: margin-left 0.4s ease;
+            min-height: 100vh;
         }
 
         .form-container {
@@ -300,10 +293,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .message.error   { background: rgba(239,68,68,0.15); color: #ef4444; }
 
         @media (max-width: 992px) {
-            .main-content { margin-left: 0; padding: 2rem 1.5rem; }
-            .sidebar { transform: translateX(-100%); }
-            .sidebar.mobile-open { transform: translateX(0); }
-            .mobile-menu-btn { display: block; }
+            .main-content { padding: 2rem 1.5rem; }
             .form-actions { flex-direction: column; gap: 1.2rem; }
             .btn { width: 100%; justify-content: center; }
         }
@@ -315,18 +305,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 
-<!-- Sidebar -->
-<nav class="sidebar" id="sidebar">
-    <?php include '../../includes/sidebaradmin.php'; ?>
-</nav>
-
-<!-- Navbar -->
-<nav class="navbar">
-    <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
-    <?php include '../../includes/navbar.php'; ?>
-</nav>
+<?php include '../../includes/navbaradmin.php'; ?>
 
 <div class="main-content">
 
@@ -506,13 +485,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 </div>
 
-<script>
-// Mobile sidebar toggle
-function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('mobile-open');
-}
 
-document.getElementById('mobileMenuBtn')?.addEventListener('click', toggleSidebar);
 
 // Price & commission live preview
 function updatePriceDisplay() {

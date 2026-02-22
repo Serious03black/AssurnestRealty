@@ -40,9 +40,22 @@ foreach($sales as $sale) {
     <title>Sales Reports | Assurnest Realty Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f8f9fa; margin: 0; padding: 0; color: #333; }
-        .sidebar { width: 250px; background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%); color: white; height: 100vh; position: fixed; left: 0; top: 0; z-index: 1000; }
-        .main-content { margin-left: 250px; padding: 2rem; }
+        :root {
+            --bg:       #0f1217;
+            --card:     #161b22;
+            --green:    #0f6b3a;
+            --green-d:  #084d2a;
+            --gold:     #d4af37;
+            --blue:     #3b82f6;
+            --red:      #ef4444;
+            --text:     #000000ff;
+            --muted:    #94a3b8;
+            --border:   #2d3748;
+            --sidebar:  260px;
+            --nav:      70px;
+        }
+        body { font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+        .main-content { padding: 2rem; }
         
         .summary-box { display: flex; gap: 20px; margin-bottom: 30px; }
         .card { background: white; padding: 20px; border-radius: 10px; flex: 1; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
@@ -56,9 +69,7 @@ foreach($sales as $sale) {
 </head>
 <body>
 
-<nav class="sidebar">
-    <?php include '../../includes/sidebaradmin.php'; ?>
-</nav>
+<?php include '../../includes/navbaradmin.php'; ?>
 
 <div class="main-content">
     <h1>Sales Reports</h1>

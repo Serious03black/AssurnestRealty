@@ -81,12 +81,26 @@ unset($u);
     <title>Manage Commissions | Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <style>
-        :root { --primary: #2c3e50; --accent: #3498db; --light: #f4f6f9; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--light); margin:0; display:flex; }
+        :root {
+            --bg:       #0f1217;
+            --card:     #161b22;
+            --green:    #0f6b3a;
+            --green-d:  #084d2a;
+            --gold:     #d4af37;
+            --blue:     #3b82f6;
+            --red:      #ef4444;
+            --text:     #e2e8f0;
+            --muted:    #94a3b8;
+            --border:   #2d3748;
+            --sidebar:  260px;
+            --nav:      70px;
+        }
+        :root { --primary: #2c3e50; --accent: #3498db;  --bg:       #0f1217; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin:0; display:flex; }
         .sidebar { width: 250px; background: var(--primary); color:white; min-height:100vh; position:fixed; }
         .main { margin-left: 250px; padding: 2rem; width: 100%; }
         
-        .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; }
+        .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; color:var(--gold);}
         h1 { margin:0; color:#333; }
         
         .card { background:white; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.05); overflow:hidden; }

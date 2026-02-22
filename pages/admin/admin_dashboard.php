@@ -174,45 +174,10 @@ try {
             min-height: 100vh;
         }
 
-        .sidebar {
-            width: var(--sidebar-width);
-            background: linear-gradient(180deg, var(--rich-green-dark), var(--rich-green));
-            color: white;
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            z-index: 1000;
-            transition: transform 0.4s ease;
-            box-shadow: 4px 0 25px rgba(0,0,0,0.5);
-            overflow-y: auto;
-        }
-
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: var(--sidebar-width);
-            right: 0;
-            height: var(--navbar-height);
-            background: linear-gradient(90deg, var(--gold), var(--gold-dark));
-            color: var(--black);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-            z-index: 999;
-            display: flex;
-            align-items: center;
-            padding: 0 30px;
-            font-weight: 600;
-            transition: left 0.4s ease;
-        }
-
-        .mobile-menu-btn { display: none; font-size: 1.9rem; cursor: pointer; color: var(--black); }
 
         .main-content {
-            margin-left: var(--sidebar-width);
-            margin-top: var(--navbar-height);
             padding: 2rem;
-            transition: margin-left 0.4s ease;
-            min-height: calc(100vh - var(--navbar-height));
+            min-height: 100vh;
         }
 
         /* .container { max-width: 1400px; margin: 0 auto; } */
@@ -353,10 +318,7 @@ try {
         }
 
         @media (max-width: 992px) {
-            .main-content { margin-left: 0; padding: 1.5rem; }
-            .sidebar { transform: translateX(-100%); }
-            .sidebar.mobile-open { transform: translateX(0); }
-            .mobile-menu-btn { display: block; }
+            .main-content { padding: 1.5rem; }
         }
 
         @media (max-width: 768px) {
@@ -367,20 +329,7 @@ try {
 </head>
 <body>
 
-<!-- Mobile toggle button -->
-<button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleSidebar()">
-    <i class="fas fa-bars"></i>
-</button>
-
-<!-- Sidebar -->
-<nav class="sidebar" id="sidebar">
-    <?php include '../../includes/sidebaradmin.php'; ?>
-</nav>
-
-<!-- Navbar -->
-<nav class="navbar">
-    <?php include '../../includes/navbar.php'; ?>
-</nav>
+<?php include '../../includes/navbaradmin.php'; ?>
 
 <div class="main-content container">
 

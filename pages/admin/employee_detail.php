@@ -151,9 +151,7 @@ $payments = $pay_hist->fetchAll(PDO::FETCH_ASSOC);
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
 
-        .sidebar { width:var(--sidebar); background:linear-gradient(180deg,var(--green-d),var(--green)); height:100vh; position:fixed; left:0; top:0; z-index:1000; overflow-y:auto; }
-        .navbar  { position:fixed; top:0; left:var(--sidebar); right:0; height:var(--nav); background:linear-gradient(90deg,var(--gold),#b8860b); display:flex; align-items:center; padding:0 30px; font-weight:700; font-size:1.1rem; z-index:999; color:#000; }
-        .main    { margin-left:var(--sidebar); margin-top:var(--nav); padding:2rem; }
+        .main    { padding:2rem; }
 
         .back-link { display:inline-flex; align-items:center; gap:6px; color:var(--gold); font-weight:600; text-decoration:none; margin-bottom:1.5rem; font-size:1rem; }
         .back-link:hover { text-decoration:underline; }
@@ -239,19 +237,12 @@ $payments = $pay_hist->fetchAll(PDO::FETCH_ASSOC);
         .modal-close:hover { color:var(--text); }
         .modal-title { font-size:1.3rem; font-weight:700; color:var(--gold); margin-bottom:1.2rem; }
 
-        @media(max-width:992px) { .main { margin-left:0; } .sidebar { display:none; } }
-        @media(max-width:600px) { .navbar { left:0; } }
+        @media(max-width:992px) { .main { padding: 1rem; } }
     </style>
 </head>
 <body>
 
-<nav class="sidebar">
-    <?php include '../../includes/sidebaradmin.php'; ?>
-</nav>
-<nav class="navbar">
-    <i class="fas fa-user-tie" style="margin-right:10px;"></i>
-    Employee Detail — <?= htmlspecialchars($emp['emp_name']) ?>
-</nav>
+<?php include '../../includes/navbaradmin.php'; ?>
 
 <div class="main">
     <a href="manage_users.php" class="back-link"><i class="fas fa-arrow-left"></i> Back to Manage Users</a>

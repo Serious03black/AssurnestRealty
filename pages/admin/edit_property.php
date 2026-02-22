@@ -188,8 +188,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 
-  <?php include '../../includes/sidebaradmin.php'; ?>
-  <?php include '../../includes/navbar.php'; ?>
+<?php include '../../includes/navbaradmin.php'; ?>
 
 <div class="container">
 

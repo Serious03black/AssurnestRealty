@@ -37,9 +37,6 @@ $properties = $stmt->fetchAll();
             margin: 0;
             padding: 0;
             color: var(--dark);
-            margin-left: 250px; /* Adjust based on sidebar width */
-            margin-top: 60px;  /* Adjust based on navbar height */
-
         }
 
         .container {
@@ -175,8 +172,7 @@ $properties = $stmt->fetchAll();
 </head>
 <body>
 
-<?php include '../../includes/navbar.php'; ?>
-<?php include '../../includes/sidebaradmin.php'; ?>
+<?php include '../../includes/navbaradmin.php'; ?>
 
 <div class="container">
 

@@ -71,10 +71,9 @@ $total_sold = count($sold_properties);
             --dark: #2c3e50;
         }
 
-        body {                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        body {  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
  background: var(--light); margin: 0; padding: 0; color: var(--dark); }
-        .container { max-width: 1100px; margin: 40px auto; padding: 0 20px;  margin-top: 1rem;
-            margin-left:250px }
+        .container { max-width: 1100px; margin: 40px auto; padding: 0 20px; margin-top: 2rem; }
         .back-link { display: inline-block; margin-bottom: 1.5rem; color: var(--primary); font-weight: 600; text-decoration: none; }
         .back-link:hover { text-decoration: underline; }
 
@@ -84,8 +83,7 @@ $total_sold = count($sold_properties);
             padding: 2rem;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             margin-bottom: 2rem;
-              margin-top: 1rem;
-            margin-left:250px
+            margin-top: 1rem;
         }
 
         .profile-header {
@@ -96,7 +94,6 @@ $total_sold = count($sold_properties);
             gap: 1rem;
             margin-bottom: 1.5rem;
             margin-top: -1rem;
-            margin-left:250px
         }
 
         .profile-name { font-size: 2rem; margin: 0; }
@@ -199,8 +196,7 @@ $total_sold = count($sold_properties);
 </head>
 <body>
 
-<?php include '../../includes/sidebaradmin.php'; ?>
-<?php include '../../includes/navbar.php'; ?>
+<?php include '../../includes/navbaradmin.php'; ?>
 
 <div class="container">
 

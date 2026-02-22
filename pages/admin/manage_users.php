@@ -149,18 +149,12 @@ foreach ($emp_sorted as $pos => $e) {
 
         .actions { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
 
-        @media(max-width:992px) { .main { margin-left:0; } .sidebar { display:none; } }
+        @media(max-width:992px) { .main { padding: 1rem; } }
     </style>
 </head>
 <body>
 
-<nav class="sidebar">
-    <?php include '../../includes/sidebaradmin.php'; ?>
-</nav>
-
-<nav class="navbar">
-    <i class="fas fa-users" style="margin-right:10px;"></i> Manage Users
-</nav>
+<?php include '../../includes/navbaradmin.php'; ?>
 
 <div class="main">
     <h1><i class="fas fa-users-cog"></i> Manage Users</h1>
